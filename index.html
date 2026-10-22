@@ -50,7 +50,7 @@
           <div class="min-w-0">
             <div class="flex items-center gap-1.5">
               <h1 class="text-sm font-bold tracking-tight text-slate-900 whitespace-nowrap" id="app-dataset-title">智能格價與動線中樞</h1>
-              <span class="bg-slate-100 text-slate-600 text-[10px] font-semibold px-1.5 py-0.5 rounded whitespace-nowrap shrink-0" id="db-mode-badge">沙盒數據 #1</span>
+              <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-1.5 py-0.5 rounded whitespace-nowrap shrink-0" id="db-mode-badge">Supabase 雲端連通</span>
             </div>
           </div>
         </div>
@@ -1038,9 +1038,42 @@
       rec.start();
     }
 
+    function fetchCloudStagingQueue() {
+      var box = document.getElementById('staging-log-preview');
+      var sbUrl = safeGetStorage('002_supabase_url', 'https://wyzwxvmsxsefzhrgvwiy.supabase.co').trim();
+      var sbKey = safeGetStorage('002_supabase_key', 'sb_publishable_grfQfwKNjUPqPFKFkuJ2qw_XXCsAew2').trim();
+      if (!sbUrl || !sbKey) return;
+      var reqHeaders = { 'apikey': sbKey };
+      if (sbKey.indexOf('eyJ') === 0) {
+        reqHeaders['Authorization'] = 'Bearer ' + sbKey;
+      }
+      fetch(sbUrl.replace(/\/$/, '') + '/rest/v1/staging_queue?select=staging_id,store_name,report_text,created_at&order=staging_id.desc&limit=5', {
+        method: 'GET',
+        headers: reqHeaders
+      }).then(function(res) {
+        if (!res.ok) return null;
+        return res.json();
+      }).then(function(rows) {
+        if (!rows || !Array.isArray(rows) || !box) return;
+        var badge = document.getElementById('db-mode-badge');
+        if (badge) {
+          badge.textContent = 'Supabase 已連通 (' + rows.length + '筆)';
+          badge.className = 'bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-1.5 py-0.5 rounded whitespace-nowrap shrink-0';
+        }
+        if (rows.length > 0) {
+          box.classList.remove('hidden');
+          box.innerHTML = '<div class="font-bold text-emerald-700 mb-1">✓ 雲端 staging_queue 實時回讀 (' + rows.length + ' 筆)：</div>' +
+            rows.map(function(r) {
+              return '<div>· #' + r.staging_id + ' [' + r.store_name + '] ' + r.report_text + '</div>';
+            }).join('');
+        }
+      }).catch(function() {});
+    }
+
     function renderStagingPreview() {
       var box = document.getElementById('staging-log-preview');
       if (!box) return;
+      fetchCloudStagingQueue();
       var raw = safeGetStorage('002_staging_queue_v3', '[]');
       var list = [];
       try { list = JSON.parse(raw); } catch (e) { list = []; }
@@ -1049,7 +1082,7 @@
         return;
       }
       box.classList.remove('hidden');
-      box.innerHTML = '<div class="font-bold text-slate-700 mb-1">待審隊列最新記錄 (' + list.length + ' 筆)：</div>' +
+      box.innerHTML = '<div class="font-bold text-slate-700 mb-1">本機/雲端待審隊列最新記錄 (' + list.length + ' 筆)：</div>' +
         list.slice(0, 3).map(function(item) {
           return '<div>· [' + item.store + '] ' + item.rawText + '</div>';
         }).join('');
@@ -1074,26 +1107,39 @@
       queue.unshift({ store: payload.store_name, rawText: payload.report_text, time: payload.created_at });
       safeSetStorage('002_staging_queue_v3', JSON.stringify(queue));
 
-      // If Supabase URL & Anon Key are configured, POST directly to Supabase REST API!
-      var sbUrl = safeGetStorage('002_supabase_url', '');
-      var sbKey = safeGetStorage('002_supabase_key', '');
+      // Official Supabase 2026 API spec: send sb_publishable_ on `apikey` header ONLY (never on Authorization: Bearer)
+      var sbUrl = safeGetStorage('002_supabase_url', 'https://wyzwxvmsxsefzhrgvwiy.supabase.co').trim();
+      var sbKey = safeGetStorage('002_supabase_key', 'sb_publishable_grfQfwKNjUPqPFKFkuJ2qw_XXCsAew2').trim();
       if (sbUrl && sbKey) {
+        var reqHeaders = {
+          'Content-Type': 'application/json',
+          'apikey': sbKey,
+          'Prefer': 'return=representation'
+        };
+        if (sbKey.indexOf('eyJ') === 0) {
+          reqHeaders['Authorization'] = 'Bearer ' + sbKey;
+        }
         fetch(sbUrl.replace(/\/$/, '') + '/rest/v1/staging_queue', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': sbKey,
-            'Authorization': 'Bearer ' + sbKey,
-            'Prefer': 'return=minimal'
-          },
-          body: JSON.stringify(payload)
-        }).then(function() {
-          showToast('✓ 已同步寫入 Supabase 雲端待審隊列！');
-        }).catch(function() {
-          showToast('✓ 已存入本機待審隊列');
+          headers: reqHeaders,
+          body: JSON.stringify({
+            store_name: payload.store_name,
+            report_text: payload.report_text,
+            is_verified: false
+          })
+        }).then(function(res) {
+          if (!res.ok) {
+            return res.text().then(function(errTxt) {
+              throw new Error('HTTP ' + res.status + ': ' + errTxt);
+            });
+          }
+          showToast('✓ 成功寫入 Supabase 雲端 staging_queue 表！');
+          fetchCloudStagingQueue();
+        }).catch(function(err) {
+          showToast('雲端寫入失敗 (' + (err && err.message ? err.message.slice(0, 38) : '請檢查網絡') + ')');
         });
       } else {
-        showToast('✓ 已存入待審核隊列 (連通 Supabase 後即自動上雲)');
+        showToast('✓ 已存入本機待審隊列');
       }
 
       document.getElementById('report-text-input').value = '';
@@ -1102,8 +1148,8 @@
 
     function openBackendModal() {
       document.getElementById('csv-url-input').value = safeGetStorage('002_sheet_csv_url', '');
-      document.getElementById('supabase-url-input').value = safeGetStorage('002_supabase_url', '');
-      document.getElementById('supabase-key-input').value = safeGetStorage('002_supabase_key', '');
+      document.getElementById('supabase-url-input').value = safeGetStorage('002_supabase_url', 'https://wyzwxvmsxsefzhrgvwiy.supabase.co');
+      document.getElementById('supabase-key-input').value = safeGetStorage('002_supabase_key', 'sb_publishable_grfQfwKNjUPqPFKFkuJ2qw_XXCsAew2');
       document.getElementById('backend-modal').classList.remove('hidden');
     }
 
@@ -1160,6 +1206,7 @@
       renderFootprints();
       renderCards();
       updateBasketSummary();
+      fetchCloudStagingQueue();
     };
   </script>
 </body>
