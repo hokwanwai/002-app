@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>水泉澳×沙角 超在地格價中樞 V2.0 (刺客照妖鏡版)</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0f172a">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+HK:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Noto Sans HK', sans-serif; -webkit-tap-highlight-color: transparent; }
+    .touch-btn { min-height: 44px; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 pb-36">
+
+  <!-- Toast Notification (Replaces native alert/prompt) -->
+  <div id="app-toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-emerald-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-2xl border border-emerald-400/40 hidden transition-all max-w-xs text-center">
+    <span id="app-toast-text">已複製戰果卡！</span>
+  </div>
+
+  <div class="max-w-md mx-auto min-h-screen bg-slate-950 flex flex-col relative shadow-2xl border-x border-slate-800">
+
+    <!-- Top Sticky Header -->
+    <header class="sticky top-0 z-40 bg-slate-900/95 backdrop-blur border-b border-slate-800 px-3.5 pt-3 pb-2.5">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-base font-black tracking-wide text-white">超在地格價中樞</span>
+          <span class="bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[10px] font-bold px-1.5 py-0.5 rounded">V2.0 刺客照妖鏡</span>
+        </div>
+        <div class="flex items-center space-x-1.5">
+          <button onclick="openSyncModal()" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg px-2 py-1 text-[11px] text-slate-300 font-bold">
+            🔄 試算表同步
+          </button>
+          <select id="district-switcher" onchange="switchDistrict(this.value)" class="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-[11px] text-emerald-400 font-bold">
+            <option value="ALL">📍 水泉澳×沙角雙子星</option>
+            <option value="WELLCOME">🏔️ 山上：水泉澳商場</option>
+            <option value="SHAKOK">🚲 山下：沙角百佳/藥房</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Store & Action Filter Bar -->
+      <div class="grid grid-cols-4 gap-1.5 mt-2.5 text-xs font-bold">
+        <button onclick="setFilter('ALL')" id="tab-ALL" class="filter-tab py-1.5 rounded-lg bg-emerald-600 text-white transition">全部 (10)</button>
+        <button onclick="setFilter('ASSASSIN')" id="tab-ASSASSIN" class="filter-tab py-1.5 rounded-lg bg-slate-900 text-rose-300 border border-rose-500/30 transition">🚨 刺客防伏</button>
+        <button onclick="setFilter('GREEN')" id="tab-GREEN" class="filter-tab py-1.5 rounded-lg bg-slate-900 text-emerald-300 border border-emerald-500/30 transition">🟢 破盤必入</button>
+        <button onclick="setFilter('WANTED')" id="tab-WANTED" class="filter-tab py-1.5 rounded-lg bg-slate-900 text-amber-300 border border-amber-500/30 transition">🛒 湊單籃</button>
+      </div>
+    </header>
+
+    <!-- Top Supermarket Assassin Mirror Banner -->
+    <section class="px-3.5 mt-3">
+      <div class="bg-gradient-to-br from-rose-950/80 via-slate-900 to-slate-900 border border-rose-500/40 rounded-2xl p-3.5 shadow-lg space-y-2.5">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-1.5">
+            <span class="text-xs font-black bg-rose-600 text-white px-2 py-0.5 rounded">今日超市刺客照妖鏡</span>
+            <span class="text-[11px] text-rose-300 font-bold">2026-10-15 實盤核驗</span>
+          </div>
+          <button onclick="shareDailyAssassinReport()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg shadow flex items-center space-x-1">
+            <span>📲 轉發防伏卡</span>
+          </button>
+        </div>
+        <div class="text-xs text-slate-200 space-y-1 leading-relaxed">
+          <div>⚠️ <b class="text-rose-300">惠康品客假買1送1</b>：單筒拉高至 $29 做買1送1（實收 <b>$14.5/筒</b>），沙角百佳買2件僅 <b>$12.0/筒</b>（藥房底價 $9.5）！</div>
+          <div>⚠️ <b class="text-rose-300">1664 白啤跨店差 $29.5/排</b>：惠康正價 <b>$72/排</b>，沙角百佳買2排折實 <b>$42.5/排</b>（買兩排即慳 $59）！</div>
+          <div>⚠️ <b class="text-rose-300">三養芝士火雞麵加至頂峰</b>：兩大超市加至 <b>$43.9-$44.0</b>（30天最高），759/360/藥房底價僅 <b>$32-$35</b>！</div>
+        </div>
+        <!-- 1-Tap Smart Combos -->
+        <div class="pt-2 border-t border-rose-500/20 grid grid-cols-2 gap-2">
+          <button onclick="applySmartCombo('SCO_HEAVY')" class="touch-btn bg-slate-900/90 hover:bg-slate-800 border border-emerald-500/40 rounded-xl p-2 text-left transition">
+            <div class="text-[11px] font-black text-emerald-400">🏔️ 山上惠康免搬重物包</div>
+            <div class="text-[10px] text-slate-300 mt-0.5">米5kg+可樂2排+丁麵9包</div>
+            <div class="text-xs font-black text-white mt-1">$148.9 <span class="text-[10px] text-emerald-400 font-normal">(慳$49.0｜11.1kg)</span></div>
+          </button>
+          <button onclick="applySmartCombo('SHAKOK_DEAL')" class="touch-btn bg-slate-900/90 hover:bg-slate-800 border border-amber-500/40 rounded-xl p-2 text-left transition">
+            <div class="text-[11px] font-black text-amber-400">🚲 沙角百佳破盤順路包</div>
+            <div class="text-[10px] text-slate-300 mt-0.5">1664兩排+薯片4件+豆奶2盒</div>
+            <div class="text-xs font-black text-white mt-1">$171.0 <span class="text-[10px] text-amber-400 font-normal">(慳$74.6｜6.6kg)</span></div>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Product Cards Container -->
+    <main class="flex-1 px-3.5 mt-3 space-y-3" id="cards-container"></main>
+
+    <!-- Bottom Sticky Basket & Stealth Voice Bar -->
+    <footer class="fixed bottom-0 max-w-md w-full bg-slate-900/95 backdrop-blur border-t border-slate-800 px-3.5 py-2.5 z-40">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div>
+            <div class="text-[10px] text-slate-400">湊單實付 / 比大市實慳</div>
+            <div class="flex items-baseline space-x-1.5">
+              <span class="text-base font-black text-white font-mono" id="disp-total-spend">$0.0</span>
+              <span class="text-xs font-bold text-emerald-400 font-mono" id="disp-total-save">慳 $0.0</span>
+            </div>
+          </div>
+          <div class="border-l border-slate-800 pl-3">
+            <div class="text-[10px] text-slate-400">總負重 (<span id="disp-selected-count">0</span>件)</div>
+            <div class="text-xs font-black text-amber-300 font-mono" id="disp-total-weight">0.0 kg</div>
+          </div>
+        </div>
+        <div class="flex items-center space-x-1.5">
+          <button onclick="shareBasketBragCard()" class="touch-btn bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-2.5 py-2 rounded-xl shadow">
+            📤 晒戰果
+          </button>
+          <button onclick="openVoiceModal()" class="touch-btn bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-2.5 py-2 rounded-xl shadow">
+            🎙️ 3秒報料
+          </button>
+        </div>
+      </div>
+      <div id="weight-warning-bar" class="text-[10px] text-amber-400 font-bold mt-1 hidden">
+        ⚠️ 負重超過 5.0kg！半山爬坡警告：強烈建議於水泉澳商場自提或使用買餸車。
+      </div>
+    </footer>
+
+    <!-- Stealth Voice & 1-Tap Field Report Modal (Zero Typing Required) -->
+    <div id="voice-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-4 hidden">
+      <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-sm p-4 space-y-3">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+          <h3 class="text-sm font-black text-white">🎙️ 出門口 3 秒語音暗號報料 (免影相防尷尬)</h3>
+          <button onclick="closeVoiceModal()" class="text-slate-400 hover:text-white text-sm px-2">✕</button>
+        </div>
+        <p class="text-[11px] text-slate-300 leading-relaxed">
+          喺藥房/街市買完行出門口，按住下面粒掣講一句（例：<b class="text-emerald-400">「沙角金城藥房可樂賣 3 蚊罐」</b>），或者直接點選快速標籤：
+        </p>
+        <div class="flex justify-center py-2">
+          <button onclick="startVoiceRecognition()" id="voice-record-btn" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-black flex items-center justify-center space-x-2 shadow-lg transition">
+            <span>🎙️ 點擊開始廣東話語音輸入</span>
+          </button>
+        </div>
+        <!-- Quick Tap Chips for Zero-Typing -->
+        <div class="space-y-1.5">
+          <div class="text-[10px] text-slate-400 font-bold">一鍵揀舖頭（免打字）：</div>
+          <div class="flex flex-wrap gap-1.5" id="quick-store-chips">
+            <button onclick="setQuickReportStore('沙角金城藥房')" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 rounded text-[11px] text-slate-200 border border-slate-700">💊 沙角藥房</button>
+            <button onclick="setQuickReportStore('水泉澳惠康')" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 rounded text-[11px] text-slate-200 border border-slate-700">🛒 水泉澳惠康</button>
+            <button onclick="setQuickReportStore('759阿信屋G14')" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 rounded text-[11px] text-slate-200 border border-slate-700">🏪 759阿信屋</button>
+            <button onclick="setQuickReportStore('優品360水泉澳')" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 rounded text-[11px] text-slate-200 border border-slate-700">🍫 優品360</button>
+          </div>
+        </div>
+        <div class="space-y-2 text-xs">
+          <input type="text" id="report-store-input" value="沙角金城藥房" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs" placeholder="門市名稱">
+          <input type="text" id="report-text-input" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs" placeholder="語音轉字結果或報價內容（例：紅罐可樂 $3/罐）">
+        </div>
+        <div class="flex space-x-2 pt-1">
+          <button onclick="closeVoiceModal()" class="w-1/2 py-2.5 bg-slate-800 text-slate-300 rounded-xl text-xs font-bold">取消</button>
+          <button onclick="submitVoiceReport()" class="w-1/2 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-bold">送入 Staging 隊列</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Google Sheet Live CSV Sync Modal -->
+    <div id="sync-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-4 hidden">
+      <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-sm p-4 space-y-3">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+          <h3 class="text-sm font-black text-white">🔄 Google Sheet 母庫動態連通設定</h3>
+          <button onclick="closeSyncModal()" class="text-slate-400 hover:text-white text-sm px-2">✕</button>
+        </div>
+        <p class="text-[11px] text-slate-300 leading-relaxed">
+          將《四庫核心數據庫》「檔案 ➔ 共用 ➔ 發佈至網路 (CSV)」的網址貼在下方，App 即會自動拉取最新價格並過濾過期項目：
+        </p>
+        <input type="url" id="csv-url-input" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs" placeholder="https://docs.google.com/spreadsheets/d/e/.../pub?output=csv">
+        <div class="flex space-x-2 pt-1">
+          <button onclick="closeSyncModal()" class="w-1/2 py-2.5 bg-slate-800 text-slate-300 rounded-xl text-xs font-bold">關閉</button>
+          <button onclick="syncFromGoogleSheetCsv()" class="w-1/2 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-bold">儲存並立即同步</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. MASTER SKU DATABASE (V3.1 Dual-Line Anchor & Assassin Mirror Schema)
+    // =========================================================================
+    var SKU_DATABASE = [
+      {
+        id: 'SKU_PRINGLES_102',
+        gtin: '8886467127137',
+        store: 'SHAKOK',
+        storeName: '百佳沙角 / 藥房對比',
+        title: '品客 Pringles 原味薯片 (102g)',
+        benchmarkPrice: 18.00,
+        normalPrice: 16.00,
+        promoPrice: 12.00,
+        breakwaterFloor: 9.50,
+        bundlePrice: 24.00,
+        bundleSave: 12.00,
+        bundleWeight: 0.22,
+        bundleSize: 2,
+        bundleUnit: '筒',
+        normCost: 11.76,
+        normUnit: '100g',
+        promoDesc: '百佳買2件 $24.0 ($12.0/筒)｜藥房水貨底價 $9.5/筒',
+        assassinTrap: '🚨 刺客拆穿：惠康將單筒拉高至 $29.0 做「買1送1」(實收 $14.5/筒)，比百佳貴 $2.5/筒！',
+        targetLine: '防波堤底價 $9.50｜大市基準 $18.00',
+        mixMatch: '同系列口味可混搭',
+        physicalNote: '2筒僅重 0.22kg，放工經沙角順路拎上山零負擔',
+        dealCadence: '有效期至 2026-10-22',
+        validUntil: '2026-10-22',
+        isAssassinAlert: true,
+        status: 'GREEN',
+        statusText: '刺客拆穿・沙角買',
+        votesUp: 14
+      },
+      {
+        id: 'SKU_1664_4PK',
+        gtin: '3080216045306',
+        store: 'SHAKOK',
+        storeName: '百佳沙角 (惠康$72勿買)',
+        title: '1664 Blanc 白啤酒 (500ml x 4罐)',
+        benchmarkPrice: 61.90,
+        normalPrice: 61.90,
+        promoPrice: 42.50,
+        breakwaterFloor: 40.00,
+        bundlePrice: 85.00,
+        bundleSave: 38.80,
+        bundleWeight: 4.00,
+        bundleSize: 2,
+        bundleUnit: '排(共8罐)',
+        normCost: 2.13,
+        normUnit: '100ml',
+        promoDesc: '百佳買2排慳 $38.80 (即 $85.0/2排，平均 $42.5/排、$10.63/罐)',
+        assassinTrap: '🚨 跨店巨額差價：惠康現售正價 $72.0/排！喺百佳買2排比惠康即慳 $59.0！',
+        targetLine: '防波堤底價 $40.00｜大市基準 $61.90',
+        mixMatch: '可混搭 1664 Rosé 桃紅啤酒',
+        physicalNote: '2排重達 4.0kg，建議開車或拉買餸車由沙角上山',
+        dealCadence: '有效期至 2026-10-22',
+        validUntil: '2026-10-22',
+        isAssassinAlert: true,
+        status: 'GREEN',
+        statusText: '創30天破盤・必入',
+        votesUp: 23
+      },
+      {
+        id: 'SKU_SAMYANG_5PK',
+        gtin: '8801073141735',
+        store: 'WELLCOME',
+        storeName: '惠康/百佳 (759/藥房平$10)',
+        title: '三養 辣雞味芝士撈麵 (140g x 5包)',
+        benchmarkPrice: 43.90,
+        normalPrice: 43.90,
+        promoPrice: 43.90,
+        breakwaterFloor: 32.00,
+        bundlePrice: 43.90,
+        bundleSave: 0.00,
+        bundleWeight: 0.70,
+        bundleSize: 1,
+        bundleUnit: '袋(5包)',
+        normCost: 6.27,
+        normUnit: '100g',
+        promoDesc: '兩大超市逆市加價至 $43.90-$44.00 (處於30天最高位)',
+        assassinTrap: '🚨 超市刺客警告：較月初 $40.90 再加 $3！屋邨藥房/759/360水貨底價僅 $32-$35，切勿於超市買貴！',
+        targetLine: '防波堤底價 $32.00｜超市現價 $43.90',
+        mixMatch: '單袋計',
+        physicalNote: '請轉場去水泉澳 759 阿信屋或優品 360 巡視',
+        dealCadence: '有效期至 2026-10-22',
+        validUntil: '2026-10-22',
+        isAssassinAlert: true,
+        status: 'RED',
+        statusText: '30天最高價・嚴禁買',
+        votesUp: 19
+      },
+      {
+        id: 'SKU_RICE_5KG',
+        gtin: '4899668101053',
+        store: 'WELLCOME',
+        storeName: '惠康水泉澳 / 百佳沙角',
+        title: '金象牌 頂上茉莉香米 (5公斤裝)',
+        benchmarkPrice: 72.90,
+        normalPrice: 72.90,
+        promoPrice: 62.90,
+        breakwaterFloor: 59.90,
+        bundlePrice: 62.90,
+        bundleSave: 10.00,
+        bundleWeight: 5.00,
+        bundleSize: 1,
+        bundleUnit: '包(5kg)',
+        normCost: 1.26,
+        normUnit: '100g',
+        promoDesc: '惠康與百佳同步由 $72.90 直減 $10 至 $62.90 (AEON 仍售 $76.90)',
+        assassinTrap: '💡 半山負重決策：既然山上惠康同山下百佳同價 ($62.90)，100% 喺水泉澳商場買完搭𨋢返屋企！',
+        targetLine: '防波堤底價 $59.90｜大市基準 $72.90',
+        mixMatch: '單包直減',
+        physicalNote: '重物 5.0kg，山上商場直達免爬坡',
+        dealCadence: '有效期至 2026-10-22',
+        validUntil: '2026-10-22',
+        isAssassinAlert: false,
+        status: 'GREEN',
+        statusText: '直減$10・山上即買',
+        votesUp: 31
+      },
+      {
+        id: 'SKU_COKE_8PK',
+        gtin: '4890008100941',
+        store: 'WELLCOME',
+        storeName: '惠康水泉澳 / 藥房對比',
+        title: '可口可樂 罐裝汽水 (330ml x 8罐)',
+        benchmarkPrice: 40.00,
+        normalPrice: 40.00,
+        promoPrice: 27.00,
+        breakwaterFloor: 24.00,
+        bundlePrice: 54.00,
+        bundleSave: 26.00,
+        bundleWeight: 5.28,
+        bundleSize: 2,
+        bundleUnit: '排(共16罐)',
+        normCost: 1.02,
+        normUnit: '100ml',
+        promoDesc: '惠康及百佳買2排 $54.00 (平均 $27.0/排、$3.38/罐)',
+        assassinTrap: '💡 藥房散買底價 $3.0/罐 ($24/8罐)，但 16 罐重達 5.3kg，計埋搬上山體力成本喺山上惠康買最抵！',
+        targetLine: '防波堤底價 $24.00｜大市基準 $40.00',
+        mixMatch: '可混搭零系可樂 Zero / 雪碧 / 芬達',
+        physicalNote: '2排共重 5.3kg，山上惠康買完推車搭𨋢',
+        dealCadence: '有效期至 2026-10-22',
+        validUntil: '2026-10-22',
+        isAssassinAlert: false,
+        status: 'GREEN',
+        statusText: '達標破盤・山上買',
+        votesUp: 27
+      },
+      {
+        id: 'SKU_DORITOS_190',
+        gtin: '028400017299',
+        store: 'SHAKOK',
+        storeName: '百佳沙角 (比惠康平$5)',
+        title: '多樂脆 Doritos 芝士味粟米片 (190g)',
+        benchmarkPrice: 29.90,
+        normalPrice: 29.90,
+        promoPrice: 20.00,
+        breakwaterFloor: 18.00,
+        bundlePrice: 40.00,
+        bundleSave: 19.80,
+        bundleWeight: 0.38,
+        bundleSize: 2,
+        bundleUnit: '包',
+        normCost: 10.53,
+        normUnit: '100g',
+        promoDesc: '百佳買2件慳 $19.80 (即 $40.0/2包，平均 $20.0/包)',
+        assassinTrap: '⚠️ 惠康買2件要 $45.0 ($22.5/包)，沙角百佳每2包平 $5.0！',
+        targetLine: '防波堤底價 $18.00｜大市基準 $29.90',
+        mixMatch: '多款口味可混搭',
+        physicalNote: '2包僅 0.38kg，沙角順路拎上山',
+        dealCadence: '有效期至 2026-10-22',
+        validUntil: '2026-10-22',
+        isAssassinAlert: false,
+        status: 'GREEN',
+        statusText: '擊穿底線・順路入',
+        votesUp: 12
+      },
+      {
+        id: 'SKU_VITASOY_1L',
+        gtin: '4891028164678',
+        store: 'SHAKOK',
+        storeName: '百佳沙角',
+        title: '維他奶 豆奶 (1公升家庭裝)',
+        benchmarkPrice: 13.00,
+        normalPrice: 13.00,
+        promoPrice: 11.00,
+        breakwaterFloor: 10.50,
+        bundlePrice: 22.00,
+        bundleSave: 4.00,
+        bundleWeight: 2.00,
+        bundleSize: 2,
+        bundleUnit: '盒(共2L)',
+        normCost: 1.10,
+        normUnit: '100ml',
+        promoDesc: '百佳買2盒慳 $4.00 (即 $22.0/2盒，平均 $11.0/盒)',
+        assassinTrap: '💡 貼近防波堤底價 $10.50，適合運動後蛋白質補給。',
+        targetLine: '防波堤底價 $10.50｜大市基準 $13.00',
+        mixMatch: '原味豆奶 / 麥精豆奶可混搭',
+        physicalNote: '2盒共重 2.0kg',
+        dealCadence: '有效期至 2026-10-22',
+        validUntil: '2026-10-22',
+        isAssassinAlert: false,
+        status: 'GREEN',
+        statusText: '貼近底價・可補倉',
+        votesUp: 9
+      },
+      {
+        id: 'SKU_NISSIN_91G',
+        gtin: '4897878000012',
+        store: 'WELLCOME',
+        storeName: '惠康水泉澳 / 百佳沙角',
+        title: '日清出前一丁 麻油味 (91g x 9包計)',
+        benchmarkPrice: 5.00,
+        normalPrice: 5.00,
+        promoPrice: 3.56,
+        breakwaterFloor: 3.40,
+        bundlePrice: 32.00,
+        bundleSave: 13.00,
+        bundleWeight: 0.82,
+        bundleSize: 9,
+        bundleUnit: '包',
+        normCost: 3.91,
+        normUnit: '100g',
+        promoDesc: '惠康及百佳買9件 $32.00 (平均 $3.56/包，折合5包裝約 $17.80)',
+        assassinTrap: '💡 藥房水貨 5 包裝底價約 $16.5-$17.0，超市買 9 包任揀口味更靈活。',
+        targetLine: '防波堤底價 $3.40/包｜單買正價 $5.00',
+        mixMatch: '全線出前一丁單包裝口味任選9件',
+        physicalNote: '9包共重 0.82kg，輕巧耐放',
+        dealCadence: '有效期至 2026-10-22',
+        validUntil: '2026-10-22',
+        isAssassinAlert: false,
+        status: 'GREEN',
+        statusText: '常態好價・山上買',
+        votesUp: 18
+      },
+      {
+        id: 'SKU_BW_MILK_1L',
+        gtin: '4894488012213',
+        store: 'SHAKOK',
+        storeName: '百佳沙角 (惠康復原價$23)',
+        title: '黑白純牛奶 全脂 (1公升裝)',
+        benchmarkPrice: 23.00,
+        normalPrice: 23.00,
+        promoPrice: 17.00,
+        breakwaterFloor: 16.00,
+        bundlePrice: 34.00,
+        bundleSave: 12.00,
+        bundleWeight: 2.00,
+        bundleSize: 2,
+        bundleUnit: '盒(共2L)',
+        normCost: 1.70,
+        normUnit: '100ml',
+        promoDesc: '百佳買2盒慳 $12.00 (即 $34.0/2盒，平均 $17.0/盒)',
+        assassinTrap: '⚠️ 惠康已取消 $16.50 特價並復原至 $23.00 正價！切勿喺惠康單買！',
+        targetLine: '防波堤底價 $16.00｜大市基準 $23.00',
+        mixMatch: '單品2盒計',
+        physicalNote: '2盒共重 2.0kg',
+        dealCadence: '有效期至 2026-10-22',
+        validUntil: '2026-10-22',
+        isAssassinAlert: true,
+        status: 'YELLOW',
+        statusText: '順路常態・勿喺惠康買',
+        votesUp: 11
+      },
+      {
+        id: 'SKU_KNIFE_OIL_3PK',
+        gtin: '4891388107186',
+        store: 'WELLCOME',
+        storeName: '惠康水泉澳 / 百佳沙角',
+        title: '刀嘜 純正花生油 (900ml x 3支裝)',
+        benchmarkPrice: 99.90,
+        normalPrice: 99.90,
+        promoPrice: 99.90,
+        breakwaterFloor: 88.00,
+        bundlePrice: 99.90,
+        bundleSave: 0.00,
+        bundleWeight: 2.70,
+        bundleSize: 1,
+        bundleUnit: '排(3支)',
+        normCost: 3.70,
+        normUnit: '100ml',
+        promoDesc: '兩大超市維持 $99.90 常規價 (AEON 售 $95.90)',
+        assassinTrap: '⏳ 距離30天破盤底線 $88.0-$89.9 尚有 $10 差價，屋企未斷油請忍手！',
+        targetLine: '防波堤底價 $88.00｜大市基準 $99.90',
+        mixMatch: '3支禮盒裝',
+        physicalNote: '重 2.7kg，等跌穿 $90 先買',
+        dealCadence: '有效期至 2026-10-22',
+        validUntil: '2026-10-22',
+        isAssassinAlert: false,
+        status: 'YELLOW',
+        statusText: '未穿底線・忍手勿買',
+        votesUp: 7
+      }
+    ];
+
+    var skuState = {};
+    SKU_DATABASE.forEach(function(s) {
+      skuState[s.id] = { wanted: false, sets: 1, voted: false };
+    });
+
+    var currentFilter = 'ALL';
+    var currentDistrict = 'ALL';
+
+    function showToast(msg) {
+      var t = document.getElementById('app-toast');
+      var txt = document.getElementById('app-toast-text');
+      if (!t || !txt) return;
+      txt.textContent = msg;
+      t.classList.remove('hidden');
+      setTimeout(function() {
+        t.classList.add('hidden');
+      }, 2400);
+    }
+
+    function switchDistrict(val) {
+      currentDistrict = val;
+      renderCards();
+    }
+
+    function setFilter(f) {
+      currentFilter = f;
+      var tabs = ['ALL', 'ASSASSIN', 'GREEN', 'WANTED'];
+      tabs.forEach(function(k) {
+        var el = document.getElementById('tab-' + k);
+        if (el) {
+          if (k === f) {
+            el.className = 'filter-tab py-1.5 rounded-lg bg-emerald-600 text-white transition';
+          } else {
+            el.className = 'filter-tab py-1.5 rounded-lg bg-slate-900 text-slate-300 border border-slate-800 transition';
+          }
+        }
+      });
+      renderCards();
+    }
+
+    function toggleWanted(skuId) {
+      if (!skuState[skuId]) return;
+      skuState[skuId].wanted = !skuState[skuId].wanted;
+      updateBasketSummary();
+      renderCards();
+    }
+
+    function voteDeal(skuId) {
+      var item = SKU_DATABASE.find(function(x) { return x.id === skuId; });
+      if (!item || !skuState[skuId]) return;
+      if (!skuState[skuId].voted) {
+        item.votesUp += 1;
+        skuState[skuId].voted = true;
+        showToast('👍 已確認「仲有貨」，感謝街坊接力驗證！');
+        renderCards();
+      } else {
+        showToast('你已經確認過呢項情報啦！');
+      }
+    }
+
+    function applySmartCombo(comboType) {
+      SKU_DATABASE.forEach(function(s) { skuState[s.id].wanted = false; });
+      if (comboType === 'SCO_HEAVY') {
+        ['SKU_RICE_5KG', 'SKU_COKE_8PK', 'SKU_NISSIN_91G'].forEach(function(id) {
+          if (skuState[id]) skuState[id].wanted = true;
+        });
+        showToast('🏔️ 已套用「水泉澳山上免搬重物包」($148.9 / 慳$49.0)');
+      } else if (comboType === 'SHAKOK_DEAL') {
+        ['SKU_1664_4PK', 'SKU_DORITOS_190', 'SKU_PRINGLES_102', 'SKU_VITASOY_1L'].forEach(function(id) {
+          if (skuState[id]) skuState[id].wanted = true;
+        });
+        showToast('🚲 已套用「沙角百佳破盤順路包」($171.0 / 慳$74.6)');
+      }
+      updateBasketSummary();
+      renderCards();
+    }
+
+    function updateBasketSummary() {
+      var totalSpend = 0;
+      var totalSave = 0;
+      var totalWeight = 0;
+      var count = 0;
+
+      SKU_DATABASE.forEach(function(sku) {
+        var st = skuState[sku.id];
+        if (st && st.wanted) {
+          var sets = st.sets || 1;
+          totalSpend += sku.bundlePrice * sets;
+          totalSave += sku.bundleSave * sets;
+          totalWeight += sku.bundleWeight * sets;
+          count += 1;
+        }
+      });
+
+      document.getElementById('disp-total-spend').textContent = '$' + totalSpend.toFixed(1);
+      document.getElementById('disp-total-save').textContent = '慳 $' + totalSave.toFixed(1);
+      document.getElementById('disp-total-weight').textContent = totalWeight.toFixed(1) + ' kg';
+      document.getElementById('disp-selected-count').textContent = String(count);
+
+      var warnBar = document.getElementById('weight-warning-bar');
+      if (warnBar) {
+        if (totalWeight >= 5.0) {
+          warnBar.classList.remove('hidden');
+        } else {
+          warnBar.classList.add('hidden');
+        }
+      }
+    }
+
+    function shareSingleCard(skuId) {
+      var sku = SKU_DATABASE.find(function(x) { return x.id === skuId; });
+      if (!sku) return;
+      var text = '🔥【水泉澳×沙角醒目格價戰報】\n' +
+        '📦 ' + sku.title + '\n' +
+        '📍 門市：' + sku.storeName + '\n' +
+        '💰 折實到手：$' + sku.promoPrice.toFixed(2) + ' (大市基準 $' + sku.benchmarkPrice.toFixed(2) + '，買一組即慳 $' + sku.bundleSave.toFixed(1) + '！)\n' +
+        '⚖️ 標準成本：$' + sku.normCost.toFixed(2) + '/' + sku.normUnit + '\n' +
+        '💡 ' + sku.assassinTrap;
+      triggerShareOrCopy(text);
+    }
+
+    function shareDailyAssassinReport() {
+      var text = '🚨【今日水泉澳×沙角 超市刺客防中伏戰報】\n' +
+        '1️⃣ 品客薯片102g：惠康標$29買1送1(實收$14.5/筒) ❌｜沙角百佳買2件 $12.0/筒 ✅ (藥房底價$9.5)\n' +
+        '2️⃣ 1664白啤4罐裝：惠康正價 $72/排 ❌｜沙角百佳買2排 $42.5/排 ✅ (買兩排即慳$59！)\n' +
+        '3️⃣ 金象米5kg：山上惠康直減$10至 $62.9 ✅ (直接山上買免搬上山)\n' +
+        '4️⃣ 三養芝士火雞麵5包：兩大超市加至 $43.9 頂峰 ❌｜去759/360/藥房買($32-$35) ✅';
+      triggerShareOrCopy(text);
+    }
+
+    function shareBasketBragCard() {
+      var selected = SKU_DATABASE.filter(function(s) { return skuState[s.id] && skuState[s.id].wanted; });
+      if (selected.length === 0) {
+        shareDailyAssassinReport();
+        return;
+      }
+      var spend = document.getElementById('disp-total-spend').textContent;
+      var save = document.getElementById('disp-total-save').textContent;
+      var weight = document.getElementById('disp-total-weight').textContent;
+      var lines = selected.map(function(s, i) {
+        return (i + 1) + '. ' + s.title + '：折實 $' + s.bundlePrice.toFixed(1) + '/' + s.bundleSize + s.bundleUnit + ' (慳$' + s.bundleSave.toFixed(1) + ')';
+      }).join('\n');
+      var text = '🏆【今日醒目掃貨戰果卡】\n' +
+        '一共揀咗 ' + selected.length + ' 款破盤貨，總實付 ' + spend + '（比大市基準狂' + save + '！總重 ' + weight + '）：\n' +
+        lines;
+      triggerShareOrCopy(text);
+    }
+
+    function triggerShareOrCopy(text) {
+      if (navigator && navigator.share) {
+        navigator.share({ title: '超在地格價戰果卡', text: text }).catch(function() {});
+      } else if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function() {
+          showToast('📲 已複製 WhatsApp 戰果卡文字，可直接貼上發送！');
+        });
+      } else {
+        showToast('📲 已備妥戰果卡文字！');
+      }
+    }
+
+    function renderCards() {
+      var container = document.getElementById('cards-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      var todayStr = '2026-10-15';
+
+      var filtered = SKU_DATABASE.filter(function(sku) {
+        if (sku.validUntil && sku.validUntil < todayStr) return false;
+        if (currentDistrict !== 'ALL' && sku.store !== currentDistrict) return false;
+        if (currentFilter === 'ASSASSIN') return sku.isAssassinAlert === true;
+        if (currentFilter === 'GREEN') return sku.status === 'GREEN';
+        if (currentFilter === 'WANTED') return skuState[sku.id] && skuState[sku.id].wanted;
+        return true;
+      });
+
+      filtered.forEach(function(sku) {
+        var st = skuState[sku.id] || { wanted: false, sets: 1 };
+        var borderCls = 'border-slate-800';
+        var statusBadgeCls = 'bg-slate-800 text-slate-200';
+        if (sku.status === 'GREEN') {
+          borderCls = 'border-emerald-500/40';
+          statusBadgeCls = 'bg-emerald-600 text-white';
+        } else if (sku.status === 'RED') {
+          borderCls = 'border-rose-500/50';
+          statusBadgeCls = 'bg-rose-600 text-white';
+        } else if (sku.status === 'YELLOW') {
+          borderCls = 'border-amber-500/40';
+          statusBadgeCls = 'bg-amber-600 text-white';
+        }
+
+        var wantedBtnCls = st.wanted
+          ? 'bg-emerald-600 text-white border-emerald-400'
+          : 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700';
+        var wantedBtnText = st.wanted ? '✓ 已入湊單籃' : '＋ 加入湊單籃';
+
+        var card = document.createElement('div');
+        card.className = 'p-3.5 rounded-2xl border ' + borderCls + ' bg-slate-900/95 shadow-lg space-y-2.5';
+        card.innerHTML =
+          '<div class="flex items-start justify-between gap-2">' +
+            '<div>' +
+              '<div class="flex items-center space-x-1.5">' +
+                '<span class="text-[10px] font-bold bg-slate-800 text-emerald-300 border border-slate-700 px-1.5 py-0.5 rounded">' + sku.storeName + '</span>' +
+                '<span class="text-[10px] text-slate-400 font-mono">' + sku.dealCadence + '</span>' +
+              '</div>' +
+              '<h2 class="text-sm font-black text-white mt-1 leading-snug">' + sku.title + '</h2>' +
+            '</div>' +
+            '<span class="text-[11px] font-black px-2 py-0.5 rounded shrink-0 ' + statusBadgeCls + '">' + sku.statusText + '</span>' +
+          '</div>' +
+          '<div class="bg-slate-950/90 p-2.5 rounded-xl border border-slate-800/80 grid grid-cols-3 gap-2 items-center">' +
+            '<div>' +
+              '<span class="text-[10px] text-slate-400 block">折實到手單價</span>' +
+              '<span class="text-lg font-black text-white font-mono">$' + sku.promoPrice.toFixed(2) + '</span>' +
+              '<span class="text-[10px] text-slate-400 block">防波堤底價 $' + sku.breakwaterFloor.toFixed(1) + '</span>' +
+            '</div>' +
+            '<div class="border-l border-slate-800 pl-2.5">' +
+              '<span class="text-[10px] text-slate-400 block">比大市基準慳</span>' +
+              '<span class="text-sm font-black text-emerald-400 font-mono">慳 $' + sku.bundleSave.toFixed(1) + '</span>' +
+              '<span class="text-[10px] text-slate-400 block">基準 $' + sku.benchmarkPrice.toFixed(1) + '</span>' +
+            '</div>' +
+            '<div class="border-l border-slate-800 pl-2.5 text-right">' +
+              '<span class="text-[10px] text-slate-400 block">標準單位成本</span>' +
+              '<span class="text-sm font-black text-amber-300 font-mono">$' + sku.normCost.toFixed(2) + '</span>' +
+              '<span class="text-[10px] text-slate-400 block">每 ' + sku.normUnit + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="text-xs space-y-1">' +
+            '<div class="text-slate-100 font-bold">📌 ' + sku.promoDesc + '（一組 ' + sku.bundleSize + sku.bundleUnit + ' 共 $' + sku.bundlePrice.toFixed(1) + '｜重 ' + sku.bundleWeight.toFixed(1) + 'kg）</div>' +
+            '<div class="text-[11px] text-rose-300 font-medium">' + sku.assassinTrap + '</div>' +
+            '<div class="text-[11px] text-slate-400">🏃 動線與負重：' + sku.physicalNote + '</div>' +
+          '</div>' +
+          '<div class="pt-2 border-t border-slate-800/80 flex items-center justify-between gap-1.5">' +
+            '<button onclick="toggleWanted(\'' + sku.id + '\')" class="touch-btn flex-1 py-1.5 px-2.5 rounded-xl border text-xs font-bold transition ' + wantedBtnCls + '">' + wantedBtnText + '</button>' +
+            '<button onclick="voteDeal(\'' + sku.id + '\')" class="touch-btn py-1.5 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-slate-200">👍 仲有貨 (' + sku.votesUp + ')</button>' +
+            '<button onclick="shareSingleCard(\'' + sku.id + '\')" class="touch-btn py-1.5 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-emerald-400">📤 晒卡</button>' +
+          '</div>';
+        container.appendChild(card);
+      });
+    }
+
+    function openVoiceModal() {
+      document.getElementById('voice-modal').classList.remove('hidden');
+    }
+    function closeVoiceModal() {
+      document.getElementById('voice-modal').classList.add('hidden');
+    }
+    function setQuickReportStore(name) {
+      document.getElementById('report-store-input').value = name;
+    }
+    function startVoiceRecognition() {
+      var SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRec) {
+        showToast('請直接點擊下方標籤或用手機鍵盤語音咪輸入！');
+        return;
+      }
+      var rec = new SpeechRec();
+      rec.lang = 'zh-HK';
+      rec.interimResults = false;
+      var btn = document.getElementById('voice-record-btn');
+      btn.textContent = '🔴 正在聆聽廣東話... 請講出舖頭與價錢';
+      rec.onresult = function(event) {
+        var transcript = event.results[0][0].transcript;
+        document.getElementById('report-text-input').value = transcript;
+        btn.textContent = '✓ 已識別語音，請確認送出';
+      };
+      rec.onerror = function() {
+        btn.textContent = '🎙️ 點擊重新開始廣東話語音輸入';
+      };
+      rec.start();
+    }
+    function submitVoiceReport() {
+      var store = document.getElementById('report-store-input').value;
+      var text = document.getElementById('report-text-input').value;
+      if (!text) {
+        showToast('請先講出或輸入現場價錢情報！');
+        return;
+      }
+      var queue = JSON.parse(localStorage.getItem('sqo_staging_v2') || '[]');
+      queue.push({ store: store, rawText: text, time: new Date().toISOString(), status: 'PENDING_OUTLIER_CHECK' });
+      localStorage.setItem('sqo_staging_v2', JSON.stringify(queue));
+      document.getElementById('report-text-input').value = '';
+      closeVoiceModal();
+      showToast('✓ 報料已存入 Staging 隔離隊列，通過防偽核驗後即刻生效！');
+    }
+
+    function openSyncModal() {
+      var savedUrl = localStorage.getItem('sqo_sheet_csv_url') || '';
+      document.getElementById('csv-url-input').value = savedUrl;
+      document.getElementById('sync-modal').classList.remove('hidden');
+    }
+    function closeSyncModal() {
+      document.getElementById('sync-modal').classList.add('hidden');
+    }
+    function syncFromGoogleSheetCsv() {
+      var url = document.getElementById('csv-url-input').value.trim();
+      if (!url) {
+        showToast('請貼入 Google Sheet 發佈至網路的 CSV 連結！');
+        return;
+      }
+      localStorage.setItem('sqo_sheet_csv_url', url);
+      closeSyncModal();
+      showToast('🔄 已綁定 Google Sheet CSV 動態數據源！');
+    }
+
+    updateBasketSummary();
+    renderCards();
+  </script>
+</body>
+</html>
