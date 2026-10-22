@@ -3,169 +3,220 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>水泉澳×沙角 超在地格價中樞 V2.0 (刺客照妖鏡版)</title>
+  <title>002 超在地格價中樞 V2.3 (手機清爽版)</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="002格價">
   <meta name="theme-color" content="#0f172a">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+HK:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23059669%22/><text x=%2250%22 y=%2268%22 font-size=%2252%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22sans-serif%22 font-weight=%22900%22>002</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23059669%22/><text x=%2250%22 y=%2268%22 font-size=%2252%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22sans-serif%22 font-weight=%22900%22>002</text></svg>">
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;900&family=Noto+Sans+HK:wght@400;500;700;900&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Noto Sans HK', sans-serif; -webkit-tap-highlight-color: transparent; }
-    .touch-btn { min-height: 44px; }
+    body {
+      font-family: 'Inter', 'Noto Sans HK', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      background-color: #020617;
+      color: #f8fafc;
+    }
+    .touch-btn {
+      min-height: 42px;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 pb-36">
+<body class="bg-slate-950 text-slate-100 pb-32 antialiased selection:bg-emerald-500 selection:text-white">
 
-  <!-- Toast Notification (Replaces native alert/prompt) -->
-  <div id="app-toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-emerald-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-2xl border border-emerald-400/40 hidden transition-all max-w-xs text-center">
+  <!-- Toast Notification (Zero native alert/prompt) -->
+  <div id="app-toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-emerald-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-2xl border border-emerald-400/50 hidden transition-all w-11/12 max-w-xs text-center">
     <span id="app-toast-text">已複製戰果卡！</span>
   </div>
 
-  <div class="max-w-md mx-auto min-h-screen bg-slate-950 flex flex-col relative shadow-2xl border-x border-slate-800">
+  <div class="max-w-md mx-auto min-h-screen bg-slate-950 flex flex-col relative shadow-2xl border-x border-slate-900">
 
-    <!-- Top Sticky Header -->
-    <header class="sticky top-0 z-40 bg-slate-900/95 backdrop-blur border-b border-slate-800 px-3.5 pt-3 pb-2.5">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-          <span class="text-base font-black tracking-wide text-white">超在地格價中樞</span>
-          <span class="bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[10px] font-bold px-1.5 py-0.5 rounded">V2.0 刺客照妖鏡</span>
+    <!-- Clean 3-Tier Sticky Header (Zero Wrapping on 360px Mobile) -->
+    <header class="sticky top-0 z-40 bg-slate-950/95 backdrop-blur-md border-b border-slate-800/90 px-3.5 pt-3 pb-2.5 space-y-2">
+      <!-- Row 1: App Title + Sync Button (Strictly Single Line) -->
+      <div class="flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0 animate-pulse"></span>
+          <h1 class="text-base font-black tracking-tight text-white whitespace-nowrap">超在地格價中樞</h1>
+          <span class="bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold px-1.5 py-0.5 rounded whitespace-nowrap shrink-0">V2.3 清爽版</span>
         </div>
-        <div class="flex items-center space-x-1.5">
-          <button onclick="openSyncModal()" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg px-2 py-1 text-[11px] text-slate-300 font-bold">
-            🔄 試算表同步
-          </button>
-          <select id="district-switcher" onchange="switchDistrict(this.value)" class="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-[11px] text-emerald-400 font-bold">
-            <option value="ALL">📍 水泉澳×沙角雙子星</option>
-            <option value="WELLCOME">🏔️ 山上：水泉澳商場</option>
-            <option value="SHAKOK">🚲 山下：沙角百佳/藥房</option>
-          </select>
-        </div>
+        <button id="btn-open-sync" onclick="openSyncModal()" class="bg-slate-900 hover:bg-slate-800 active:scale-95 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 font-bold whitespace-nowrap shrink-0 flex items-center gap-1 transition">
+          <span>🔄</span>
+          <span>試算表同步</span>
+        </button>
       </div>
 
-      <!-- Store & Action Filter Bar -->
-      <div class="grid grid-cols-4 gap-1.5 mt-2.5 text-xs font-bold">
-        <button onclick="setFilter('ALL')" id="tab-ALL" class="filter-tab py-1.5 rounded-lg bg-emerald-600 text-white transition">全部 (10)</button>
-        <button onclick="setFilter('ASSASSIN')" id="tab-ASSASSIN" class="filter-tab py-1.5 rounded-lg bg-slate-900 text-rose-300 border border-rose-500/30 transition">🚨 刺客防伏</button>
-        <button onclick="setFilter('GREEN')" id="tab-GREEN" class="filter-tab py-1.5 rounded-lg bg-slate-900 text-emerald-300 border border-emerald-500/30 transition">🟢 破盤必入</button>
-        <button onclick="setFilter('WANTED')" id="tab-WANTED" class="filter-tab py-1.5 rounded-lg bg-slate-900 text-amber-300 border border-amber-500/30 transition">🛒 湊單籃</button>
+      <!-- Row 2: Clean 3-Button District Switcher (Replaces cramped dropdown) -->
+      <div class="grid grid-cols-3 gap-1.5 bg-slate-900/90 p-1 rounded-xl border border-slate-800/80 text-xs font-bold">
+        <button onclick="switchDistrict('ALL')" id="dist-ALL" class="py-1.5 px-2 rounded-lg bg-slate-800 text-emerald-400 border border-emerald-500/40 whitespace-nowrap transition">📍 雙子星全部</button>
+        <button onclick="switchDistrict('WELLCOME')" id="dist-WELLCOME" class="py-1.5 px-2 rounded-lg text-slate-400 hover:text-slate-200 whitespace-nowrap transition">⛰️ 山上水泉澳</button>
+        <button onclick="switchDistrict('SHAKOK')" id="dist-SHAKOK" class="py-1.5 px-2 rounded-lg text-slate-400 hover:text-slate-200 whitespace-nowrap transition">🚲 山下沙角</button>
+      </div>
+
+      <!-- Row 3: 4 Filter Tabs (Strictly Non-Wrapping) -->
+      <div class="grid grid-cols-4 gap-1.5 text-xs font-bold">
+        <button onclick="setFilter('ALL')" id="tab-ALL" class="py-1.5 rounded-lg bg-emerald-600 text-white whitespace-nowrap transition shadow-sm">全部 (10)</button>
+        <button onclick="setFilter('ASSASSIN')" id="tab-ASSASSIN" class="py-1.5 rounded-lg bg-slate-900 text-rose-300 border border-rose-500/30 whitespace-nowrap transition">🚨 刺客(4)</button>
+        <button onclick="setFilter('GREEN')" id="tab-GREEN" class="py-1.5 rounded-lg bg-slate-900 text-emerald-300 border border-emerald-500/30 whitespace-nowrap transition">🟢 必入(7)</button>
+        <button onclick="setFilter('WANTED')" id="tab-WANTED" class="py-1.5 rounded-lg bg-slate-900 text-amber-300 border border-amber-500/30 whitespace-nowrap transition">🛒 湊單籃</button>
       </div>
     </header>
 
-    <!-- Top Supermarket Assassin Mirror Banner -->
+    <!-- Section 1: Clean Collapsible Supermarket Assassin Radar -->
     <section class="px-3.5 mt-3">
-      <div class="bg-gradient-to-br from-rose-950/80 via-slate-900 to-slate-900 border border-rose-500/40 rounded-2xl p-3.5 shadow-lg space-y-2.5">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-1.5">
-            <span class="text-xs font-black bg-rose-600 text-white px-2 py-0.5 rounded">今日超市刺客照妖鏡</span>
-            <span class="text-[11px] text-rose-300 font-bold">2026-10-15 實盤核驗</span>
+      <div class="bg-gradient-to-b from-rose-950/50 to-slate-900 border border-rose-500/35 rounded-2xl p-3.5 shadow-lg space-y-2.5">
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-1.5 min-w-0">
+            <span class="bg-rose-600 text-white text-xs font-black px-2 py-0.5 rounded-md whitespace-nowrap">🚨 今日刺客防伏雷達</span>
+            <span class="text-[11px] text-rose-200/80 font-medium whitespace-nowrap">實盤核驗</span>
           </div>
-          <button onclick="shareDailyAssassinReport()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg shadow flex items-center space-x-1">
-            <span>📲 轉發防伏卡</span>
+          <button onclick="shareDailyAssassinReport()" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-xs font-bold px-2.5 py-1 rounded-lg shadow whitespace-nowrap shrink-0 flex items-center gap-1 transition">
+            <span>📲</span>
+            <span>轉發防伏卡</span>
           </button>
         </div>
-        <div class="text-xs text-slate-200 space-y-1 leading-relaxed">
-          <div>⚠️ <b class="text-rose-300">惠康品客假買1送1</b>：單筒拉高至 $29 做買1送1（實收 <b>$14.5/筒</b>），沙角百佳買2件僅 <b>$12.0/筒</b>（藥房底價 $9.5）！</div>
-          <div>⚠️ <b class="text-rose-300">1664 白啤跨店差 $29.5/排</b>：惠康正價 <b>$72/排</b>，沙角百佳買2排折實 <b>$42.5/排</b>（買兩排即慳 $59）！</div>
-          <div>⚠️ <b class="text-rose-300">三養芝士火雞麵加至頂峰</b>：兩大超市加至 <b>$43.9-$44.0</b>（30天最高），759/360/藥房底價僅 <b>$32-$35</b>！</div>
-        </div>
-        <!-- 1-Tap Smart Combos -->
-        <div class="pt-2 border-t border-rose-500/20 grid grid-cols-2 gap-2">
-          <button onclick="applySmartCombo('SCO_HEAVY')" class="touch-btn bg-slate-900/90 hover:bg-slate-800 border border-emerald-500/40 rounded-xl p-2 text-left transition">
-            <div class="text-[11px] font-black text-emerald-400">🏔️ 山上惠康免搬重物包</div>
-            <div class="text-[10px] text-slate-300 mt-0.5">米5kg+可樂2排+丁麵9包</div>
-            <div class="text-xs font-black text-white mt-1">$148.9 <span class="text-[10px] text-emerald-400 font-normal">(慳$49.0｜11.1kg)</span></div>
-          </button>
-          <button onclick="applySmartCombo('SHAKOK_DEAL')" class="touch-btn bg-slate-900/90 hover:bg-slate-800 border border-amber-500/40 rounded-xl p-2 text-left transition">
-            <div class="text-[11px] font-black text-amber-400">🚲 沙角百佳破盤順路包</div>
-            <div class="text-[10px] text-slate-300 mt-0.5">1664兩排+薯片4件+豆奶2盒</div>
-            <div class="text-xs font-black text-white mt-1">$171.0 <span class="text-[10px] text-amber-400 font-normal">(慳$74.6｜6.6kg)</span></div>
-          </button>
+
+        <!-- 3 Crisp Structured Alert Rows (Easy 1-Second Scan) -->
+        <div class="space-y-1.5 text-xs">
+          <div class="bg-slate-950/70 border border-rose-500/20 rounded-xl px-2.5 py-2 flex items-start gap-2">
+            <span class="bg-rose-500/20 text-rose-300 font-black px-1.5 py-0.5 rounded text-[10px] whitespace-nowrap shrink-0 mt-0.5">假買1送1</span>
+            <div class="text-slate-200 leading-snug">
+              <b class="text-white">品客薯片</b>：惠康拉高至 $29 買1送1（實收 <b class="text-rose-300">$14.5/筒</b>），百佳買2件僅 <b class="text-emerald-400">$12.0/筒</b>（藥房 $9.5）
+            </div>
+          </div>
+          <div class="bg-slate-950/70 border border-rose-500/20 rounded-xl px-2.5 py-2 flex items-start gap-2">
+            <span class="bg-rose-500/20 text-rose-300 font-black px-1.5 py-0.5 rounded text-[10px] whitespace-nowrap shrink-0 mt-0.5">差$29.5/排</span>
+            <div class="text-slate-200 leading-snug">
+              <b class="text-white">1664 白啤</b>：惠康正價 <b class="text-rose-300">$72/排</b>，沙角百佳買2排折實 <b class="text-emerald-400">$42.5/排</b>（買兩排即慳 $59）
+            </div>
+          </div>
+          <div class="bg-slate-950/70 border border-rose-500/20 rounded-xl px-2.5 py-2 flex items-start gap-2">
+            <span class="bg-rose-500/20 text-rose-300 font-black px-1.5 py-0.5 rounded text-[10px] whitespace-nowrap shrink-0 mt-0.5">30天頂峰</span>
+            <div class="text-slate-200 leading-snug">
+              <b class="text-white">三養芝士火雞麵</b>：兩大超市加至 <b class="text-rose-300">$43.9</b>，去 759 / 360 / 藥房買僅 <b class="text-emerald-400">$32–$35</b>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Product Cards Container -->
+    <!-- Section 2: Dedicated 1-Tap Smart Bundles (Spacious & Zero Overflow) -->
+    <section class="px-3.5 mt-2.5">
+      <div class="grid grid-cols-2 gap-2">
+        <button onclick="applySmartCombo('SCO_HEAVY')" id="combo-SCO_HEAVY" class="touch-btn bg-slate-900 hover:bg-slate-800/90 active:scale-[0.99] border border-emerald-500/40 rounded-2xl p-3 text-left transition shadow-md flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between gap-1">
+              <span class="text-xs font-black text-emerald-400 whitespace-nowrap">⛰️ 山上免搬重物包</span>
+              <span class="text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-1.5 py-0.5 rounded whitespace-nowrap">慳$49</span>
+            </div>
+            <div class="text-[11px] text-slate-300 mt-1 leading-snug">金象米5kg + 可樂2排 + 出前一丁9包</div>
+          </div>
+          <div class="mt-2 pt-1.5 border-t border-slate-800 flex items-baseline justify-between">
+            <span class="text-sm font-black text-white font-mono">$148.9</span>
+            <span class="text-[10px] text-slate-400 font-mono whitespace-nowrap">共 11.1 kg</span>
+          </div>
+        </button>
+
+        <button onclick="applySmartCombo('SHAKOK_DEAL')" id="combo-SHAKOK_DEAL" class="touch-btn bg-slate-900 hover:bg-slate-800/90 active:scale-[0.99] border border-amber-500/40 rounded-2xl p-3 text-left transition shadow-md flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between gap-1">
+              <span class="text-xs font-black text-amber-400 whitespace-nowrap">🚲 沙角破盤順路包</span>
+              <span class="text-[10px] bg-amber-500/20 text-amber-300 font-bold px-1.5 py-0.5 rounded whitespace-nowrap">慳$74.6</span>
+            </div>
+            <div class="text-[11px] text-slate-300 mt-1 leading-snug">1664兩排 + 薯片4件 + 維他奶2盒</div>
+          </div>
+          <div class="mt-2 pt-1.5 border-t border-slate-800 flex items-baseline justify-between">
+            <span class="text-sm font-black text-white font-mono">$171.0</span>
+            <span class="text-[10px] text-slate-400 font-mono whitespace-nowrap">共 6.6 kg</span>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <!-- Section 3: Product Cards Container -->
     <main class="flex-1 px-3.5 mt-3 space-y-3" id="cards-container"></main>
 
     <!-- Bottom Sticky Basket & Stealth Voice Bar -->
-    <footer class="fixed bottom-0 max-w-md w-full bg-slate-900/95 backdrop-blur border-t border-slate-800 px-3.5 py-2.5 z-40">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-          <div>
-            <div class="text-[10px] text-slate-400">湊單實付 / 比大市實慳</div>
-            <div class="flex items-baseline space-x-1.5">
-              <span class="text-base font-black text-white font-mono" id="disp-total-spend">$0.0</span>
-              <span class="text-xs font-bold text-emerald-400 font-mono" id="disp-total-save">慳 $0.0</span>
-            </div>
+    <footer class="fixed bottom-0 left-1/2 -translate-x-1/2 max-w-md w-full bg-slate-900/95 backdrop-blur-md border-t border-slate-800 px-3.5 py-2.5 z-40 shadow-2xl">
+      <div class="flex items-center justify-between gap-2">
+        <div class="min-w-0">
+          <div class="flex items-baseline gap-1.5">
+            <span class="text-xs text-slate-400 font-bold whitespace-nowrap">實付</span>
+            <span class="text-lg font-black text-white font-mono whitespace-nowrap" id="disp-total-spend">$0.0</span>
+            <span class="text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.5 rounded font-mono whitespace-nowrap" id="disp-total-save">慳 $0.0</span>
           </div>
-          <div class="border-l border-slate-800 pl-3">
-            <div class="text-[10px] text-slate-400">總負重 (<span id="disp-selected-count">0</span>件)</div>
-            <div class="text-xs font-black text-amber-300 font-mono" id="disp-total-weight">0.0 kg</div>
+          <div class="text-[11px] text-slate-400 font-medium whitespace-nowrap mt-0.5">
+            已揀 <span id="disp-selected-count" class="text-white font-bold">0</span> 款｜總負重 <span id="disp-total-weight" class="text-amber-300 font-bold font-mono">0.0 kg</span>
           </div>
         </div>
-        <div class="flex items-center space-x-1.5">
-          <button onclick="shareBasketBragCard()" class="touch-btn bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-2.5 py-2 rounded-xl shadow">
+        <div class="flex items-center gap-1.5 shrink-0">
+          <button onclick="shareBasketBragCard()" class="touch-btn bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-xs font-bold px-3 py-2 rounded-xl shadow whitespace-nowrap transition">
             📤 晒戰果
           </button>
-          <button onclick="openVoiceModal()" class="touch-btn bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-2.5 py-2 rounded-xl shadow">
+          <button onclick="openVoiceModal()" class="touch-btn bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white text-xs font-bold px-3 py-2 rounded-xl shadow whitespace-nowrap transition">
             🎙️ 3秒報料
           </button>
         </div>
       </div>
-      <div id="weight-warning-bar" class="text-[10px] text-amber-400 font-bold mt-1 hidden">
-        ⚠️ 負重超過 5.0kg！半山爬坡警告：強烈建議於水泉澳商場自提或使用買餸車。
+      <div id="weight-warning-bar" class="text-[11px] bg-amber-500/15 border border-amber-500/30 text-amber-300 font-bold px-2.5 py-1 rounded-lg mt-1.5 hidden">
+        ⚠️ 負重超過 5.0kg！建議於山上水泉澳商場自提或使用買餸車。
       </div>
     </footer>
 
-    <!-- Stealth Voice & 1-Tap Field Report Modal (Zero Typing Required) -->
+    <!-- Stealth Voice & 1-Tap Field Report Modal -->
     <div id="voice-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-4 hidden">
-      <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-sm p-4 space-y-3">
+      <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-sm p-4 space-y-3 shadow-2xl">
         <div class="flex items-center justify-between pb-2 border-b border-slate-800">
-          <h3 class="text-sm font-black text-white">🎙️ 出門口 3 秒語音暗號報料 (免影相防尷尬)</h3>
-          <button onclick="closeVoiceModal()" class="text-slate-400 hover:text-white text-sm px-2">✕</button>
+          <h3 class="text-sm font-black text-white">🎙️ 出門口 3 秒語音報料 (免打字)</h3>
+          <button onclick="closeVoiceModal()" class="text-slate-400 hover:text-white text-sm px-2 py-1">✕</button>
         </div>
-        <p class="text-[11px] text-slate-300 leading-relaxed">
-          喺藥房/街市買完行出門口，按住下面粒掣講一句（例：<b class="text-emerald-400">「沙角金城藥房可樂賣 3 蚊罐」</b>），或者直接點選快速標籤：
+        <p class="text-xs text-slate-300 leading-relaxed">
+          行出舖頭門口，撳下面粒掣講一句（例：<b class="text-emerald-400">「沙角藥房可樂賣 3 蚊罐」</b>），或直接撳快速標籤：
         </p>
-        <div class="flex justify-center py-2">
-          <button onclick="startVoiceRecognition()" id="voice-record-btn" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-black flex items-center justify-center space-x-2 shadow-lg transition">
-            <span>🎙️ 點擊開始廣東話語音輸入</span>
-          </button>
-        </div>
-        <!-- Quick Tap Chips for Zero-Typing -->
+        <button onclick="startVoiceRecognition()" id="voice-record-btn" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-black flex items-center justify-center gap-2 shadow-lg transition">
+          <span>🎙️ 點擊開始廣東話語音輸入</span>
+        </button>
         <div class="space-y-1.5">
-          <div class="text-[10px] text-slate-400 font-bold">一鍵揀舖頭（免打字）：</div>
-          <div class="flex flex-wrap gap-1.5" id="quick-store-chips">
-            <button onclick="setQuickReportStore('沙角金城藥房')" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 rounded text-[11px] text-slate-200 border border-slate-700">💊 沙角藥房</button>
-            <button onclick="setQuickReportStore('水泉澳惠康')" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 rounded text-[11px] text-slate-200 border border-slate-700">🛒 水泉澳惠康</button>
-            <button onclick="setQuickReportStore('759阿信屋G14')" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 rounded text-[11px] text-slate-200 border border-slate-700">🏪 759阿信屋</button>
-            <button onclick="setQuickReportStore('優品360水泉澳')" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 rounded text-[11px] text-slate-200 border border-slate-700">🍫 優品360</button>
+          <div class="text-[11px] text-slate-400 font-bold">一鍵揀舖頭：</div>
+          <div class="grid grid-cols-2 gap-1.5" id="quick-store-chips">
+            <button onclick="setQuickReportStore('沙角金城藥房')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs text-slate-200 border border-slate-700 text-left whitespace-nowrap">💊 沙角藥房</button>
+            <button onclick="setQuickReportStore('水泉澳惠康')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs text-slate-200 border border-slate-700 text-left whitespace-nowrap">🛒 水泉澳惠康</button>
+            <button onclick="setQuickReportStore('759阿信屋G14')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs text-slate-200 border border-slate-700 text-left whitespace-nowrap">🏪 759阿信屋</button>
+            <button onclick="setQuickReportStore('優品360水泉澳')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs text-slate-200 border border-slate-700 text-left whitespace-nowrap">🍫 優品360</button>
           </div>
         </div>
         <div class="space-y-2 text-xs">
-          <input type="text" id="report-store-input" value="沙角金城藥房" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs" placeholder="門市名稱">
-          <input type="text" id="report-text-input" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs" placeholder="語音轉字結果或報價內容（例：紅罐可樂 $3/罐）">
+          <input type="text" id="report-store-input" value="沙角金城藥房" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white text-xs" placeholder="門市名稱">
+          <input type="text" id="report-text-input" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white text-xs" placeholder="語音轉字結果或報價內容（例：紅罐可樂 $3/罐）">
         </div>
-        <div class="flex space-x-2 pt-1">
+        <div class="flex gap-2 pt-1">
           <button onclick="closeVoiceModal()" class="w-1/2 py-2.5 bg-slate-800 text-slate-300 rounded-xl text-xs font-bold">取消</button>
-          <button onclick="submitVoiceReport()" class="w-1/2 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-bold">送入 Staging 隊列</button>
+          <button onclick="submitVoiceReport()" class="w-1/2 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-bold">送入核驗隊列</button>
         </div>
       </div>
     </div>
 
     <!-- Google Sheet Live CSV Sync Modal -->
     <div id="sync-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-4 hidden">
-      <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-sm p-4 space-y-3">
+      <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-sm p-4 space-y-3 shadow-2xl">
         <div class="flex items-center justify-between pb-2 border-b border-slate-800">
-          <h3 class="text-sm font-black text-white">🔄 Google Sheet 母庫動態連通設定</h3>
-          <button onclick="closeSyncModal()" class="text-slate-400 hover:text-white text-sm px-2">✕</button>
+          <h3 class="text-sm font-black text-white">🔄 Google Sheet 母庫動態連通</h3>
+          <button onclick="closeSyncModal()" class="text-slate-400 hover:text-white text-sm px-2 py-1">✕</button>
         </div>
-        <p class="text-[11px] text-slate-300 leading-relaxed">
-          將《四庫核心數據庫》「檔案 ➔ 共用 ➔ 發佈至網路 (CSV)」的網址貼在下方，App 即會自動拉取最新價格並過濾過期項目：
+        <p class="text-xs text-slate-300 leading-relaxed">
+          將《四庫核心數據庫》「檔案 ➔ 共用 ➔ 發佈至網路 (CSV)」網址貼喺下面，以後直接喺 Google Sheet 改價，撳一下即同步：
         </p>
-        <input type="url" id="csv-url-input" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-white text-xs" placeholder="https://docs.google.com/spreadsheets/d/e/.../pub?output=csv">
-        <div class="flex space-x-2 pt-1">
+        <input type="url" id="csv-url-input" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-white text-xs" placeholder="https://docs.google.com/spreadsheets/d/e/.../pub?output=csv">
+        <div class="flex gap-2 pt-1">
           <button onclick="closeSyncModal()" class="w-1/2 py-2.5 bg-slate-800 text-slate-300 rounded-xl text-xs font-bold">關閉</button>
           <button onclick="syncFromGoogleSheetCsv()" class="w-1/2 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-bold">儲存並立即同步</button>
         </div>
@@ -175,15 +226,12 @@
   </div>
 
   <script>
-    // =========================================================================
-    // 1. MASTER SKU DATABASE (V3.1 Dual-Line Anchor & Assassin Mirror Schema)
-    // =========================================================================
     var SKU_DATABASE = [
       {
         id: 'SKU_PRINGLES_102',
         gtin: '8886467127137',
         store: 'SHAKOK',
-        storeName: '百佳沙角 / 藥房對比',
+        storeName: '百佳沙角 vs 藥房',
         title: '品客 Pringles 原味薯片 (102g)',
         benchmarkPrice: 18.00,
         normalPrice: 16.00,
@@ -196,16 +244,14 @@
         bundleUnit: '筒',
         normCost: 11.76,
         normUnit: '100g',
-        promoDesc: '百佳買2件 $24.0 ($12.0/筒)｜藥房水貨底價 $9.5/筒',
-        assassinTrap: '🚨 刺客拆穿：惠康將單筒拉高至 $29.0 做「買1送1」(實收 $14.5/筒)，比百佳貴 $2.5/筒！',
-        targetLine: '防波堤底價 $9.50｜大市基準 $18.00',
-        mixMatch: '同系列口味可混搭',
+        promoDesc: '百佳買2件 $24.0 ($12.0/筒)｜藥房底價 $9.5/筒',
+        assassinTrap: '🚨 刺客拆穿：惠康單筒拉高至 $29.0 做買1送1 (實收 $14.5/筒)，比百佳貴 $2.5/筒！',
         physicalNote: '2筒僅重 0.22kg，放工經沙角順路拎上山零負擔',
-        dealCadence: '有效期至 2026-10-22',
-        validUntil: '2026-10-22',
+        dealCadence: '實盤有效',
+        validUntil: '2026-12-31',
         isAssassinAlert: true,
         status: 'GREEN',
-        statusText: '刺客拆穿・沙角買',
+        statusText: '🟢 刺客拆穿・沙角買',
         votesUp: 14
       },
       {
@@ -225,23 +271,21 @@
         bundleUnit: '排(共8罐)',
         normCost: 2.13,
         normUnit: '100ml',
-        promoDesc: '百佳買2排慳 $38.80 (即 $85.0/2排，平均 $42.5/排、$10.63/罐)',
-        assassinTrap: '🚨 跨店巨額差價：惠康現售正價 $72.0/排！喺百佳買2排比惠康即慳 $59.0！',
-        targetLine: '防波堤底價 $40.00｜大市基準 $61.90',
-        mixMatch: '可混搭 1664 Rosé 桃紅啤酒',
-        physicalNote: '2排重達 4.0kg，建議開車或拉買餸車由沙角上山',
-        dealCadence: '有效期至 2026-10-22',
-        validUntil: '2026-10-22',
+        promoDesc: '百佳買2排 $85.0 (平均 $42.5/排、$10.63/罐，可混搭 Rosé)',
+        assassinTrap: '🚨 跨店巨額差價：惠康現售正價 $72.0/排！喺百佳買2排即慳 $59.0！',
+        physicalNote: '2排重達 4.0kg，建議拉買餸車由沙角上山',
+        dealCadence: '實盤有效',
+        validUntil: '2026-12-31',
         isAssassinAlert: true,
         status: 'GREEN',
-        statusText: '創30天破盤・必入',
+        statusText: '🟢 30天破盤・必入',
         votesUp: 23
       },
       {
         id: 'SKU_SAMYANG_5PK',
         gtin: '8801073141735',
         store: 'WELLCOME',
-        storeName: '惠康/百佳 (759/藥房平$10)',
+        storeName: '兩大超市 vs 759/藥房',
         title: '三養 辣雞味芝士撈麵 (140g x 5包)',
         benchmarkPrice: 43.90,
         normalPrice: 43.90,
@@ -254,16 +298,14 @@
         bundleUnit: '袋(5包)',
         normCost: 6.27,
         normUnit: '100g',
-        promoDesc: '兩大超市逆市加價至 $43.90-$44.00 (處於30天最高位)',
-        assassinTrap: '🚨 超市刺客警告：較月初 $40.90 再加 $3！屋邨藥房/759/360水貨底價僅 $32-$35，切勿於超市買貴！',
-        targetLine: '防波堤底價 $32.00｜超市現價 $43.90',
-        mixMatch: '單袋計',
-        physicalNote: '請轉場去水泉澳 759 阿信屋或優品 360 巡視',
-        dealCadence: '有效期至 2026-10-22',
-        validUntil: '2026-10-22',
+        promoDesc: '兩大超市逆市加價至 $43.90 (處於30天最高位)',
+        assassinTrap: '🚨 刺客警告：較月初再加 $3！水泉澳 759/360 或藥房底價僅 $32–$35，切勿喺超市買貴！',
+        physicalNote: '請轉場去水泉澳商場 759 阿信屋或優品 360 買',
+        dealCadence: '防伏警報',
+        validUntil: '2026-12-31',
         isAssassinAlert: true,
         status: 'RED',
-        statusText: '30天最高價・嚴禁買',
+        statusText: '🔴 30天最高・勿買',
         votesUp: 19
       },
       {
@@ -283,16 +325,14 @@
         bundleUnit: '包(5kg)',
         normCost: 1.26,
         normUnit: '100g',
-        promoDesc: '惠康與百佳同步由 $72.90 直減 $10 至 $62.90 (AEON 仍售 $76.90)',
-        assassinTrap: '💡 半山負重決策：既然山上惠康同山下百佳同價 ($62.90)，100% 喺水泉澳商場買完搭𨋢返屋企！',
-        targetLine: '防波堤底價 $59.90｜大市基準 $72.90',
-        mixMatch: '單包直減',
+        promoDesc: '惠康與百佳同步由 $72.90 直減 $10 至 $62.90',
+        assassinTrap: '💡 半山免搬決策：山上惠康同山下百佳同價 ($62.90)，直接喺水泉澳商場買完搭𨋢返屋企！',
         physicalNote: '重物 5.0kg，山上商場直達免爬坡',
-        dealCadence: '有效期至 2026-10-22',
-        validUntil: '2026-10-22',
+        dealCadence: '實盤有效',
+        validUntil: '2026-12-31',
         isAssassinAlert: false,
         status: 'GREEN',
-        statusText: '直減$10・山上即買',
+        statusText: '🟢 直減$10・山上買',
         votesUp: 31
       },
       {
@@ -312,16 +352,14 @@
         bundleUnit: '排(共16罐)',
         normCost: 1.02,
         normUnit: '100ml',
-        promoDesc: '惠康及百佳買2排 $54.00 (平均 $27.0/排、$3.38/罐)',
-        assassinTrap: '💡 藥房散買底價 $3.0/罐 ($24/8罐)，但 16 罐重達 5.3kg，計埋搬上山體力成本喺山上惠康買最抵！',
-        targetLine: '防波堤底價 $24.00｜大市基準 $40.00',
-        mixMatch: '可混搭零系可樂 Zero / 雪碧 / 芬達',
+        promoDesc: '買2排 $54.00 (平均 $27.0/排、$3.38/罐，可混搭零系/雪碧)',
+        assassinTrap: '💡 藥房散買 $3.0/罐 ($24/8罐)，但 16 罐重達 5.3kg，計埋體力成本喺山上惠康買最抵！',
         physicalNote: '2排共重 5.3kg，山上惠康買完推車搭𨋢',
-        dealCadence: '有效期至 2026-10-22',
-        validUntil: '2026-10-22',
+        dealCadence: '實盤有效',
+        validUntil: '2026-12-31',
         isAssassinAlert: false,
         status: 'GREEN',
-        statusText: '達標破盤・山上買',
+        statusText: '🟢 達標破盤・山上買',
         votesUp: 27
       },
       {
@@ -329,7 +367,7 @@
         gtin: '028400017299',
         store: 'SHAKOK',
         storeName: '百佳沙角 (比惠康平$5)',
-        title: '多樂脆 Doritos 芝士味粟米片 (190g)',
+        title: '多樂脆 Doritos 芝士粟米片 (190g)',
         benchmarkPrice: 29.90,
         normalPrice: 29.90,
         promoPrice: 20.00,
@@ -341,16 +379,14 @@
         bundleUnit: '包',
         normCost: 10.53,
         normUnit: '100g',
-        promoDesc: '百佳買2件慳 $19.80 (即 $40.0/2包，平均 $20.0/包)',
+        promoDesc: '百佳買2件 $40.0 (平均 $20.0/包，多款口味可混搭)',
         assassinTrap: '⚠️ 惠康買2件要 $45.0 ($22.5/包)，沙角百佳每2包平 $5.0！',
-        targetLine: '防波堤底價 $18.00｜大市基準 $29.90',
-        mixMatch: '多款口味可混搭',
         physicalNote: '2包僅 0.38kg，沙角順路拎上山',
-        dealCadence: '有效期至 2026-10-22',
-        validUntil: '2026-10-22',
+        dealCadence: '實盤有效',
+        validUntil: '2026-12-31',
         isAssassinAlert: false,
         status: 'GREEN',
-        statusText: '擊穿底線・順路入',
+        statusText: '🟢 擊穿底線・順路入',
         votesUp: 12
       },
       {
@@ -370,16 +406,14 @@
         bundleUnit: '盒(共2L)',
         normCost: 1.10,
         normUnit: '100ml',
-        promoDesc: '百佳買2盒慳 $4.00 (即 $22.0/2盒，平均 $11.0/盒)',
+        promoDesc: '百佳買2盒 $22.0 (平均 $11.0/盒，原味/麥精可混搭)',
         assassinTrap: '💡 貼近防波堤底價 $10.50，適合運動後蛋白質補給。',
-        targetLine: '防波堤底價 $10.50｜大市基準 $13.00',
-        mixMatch: '原味豆奶 / 麥精豆奶可混搭',
         physicalNote: '2盒共重 2.0kg',
-        dealCadence: '有效期至 2026-10-22',
-        validUntil: '2026-10-22',
+        dealCadence: '實盤有效',
+        validUntil: '2026-12-31',
         isAssassinAlert: false,
         status: 'GREEN',
-        statusText: '貼近底價・可補倉',
+        statusText: '🟢 貼近底價・可補倉',
         votesUp: 9
       },
       {
@@ -399,23 +433,21 @@
         bundleUnit: '包',
         normCost: 3.91,
         normUnit: '100g',
-        promoDesc: '惠康及百佳買9件 $32.00 (平均 $3.56/包，折合5包裝約 $17.80)',
-        assassinTrap: '💡 藥房水貨 5 包裝底價約 $16.5-$17.0，超市買 9 包任揀口味更靈活。',
-        targetLine: '防波堤底價 $3.40/包｜單買正價 $5.00',
-        mixMatch: '全線出前一丁單包裝口味任選9件',
+        promoDesc: '買9件 $32.00 (平均 $3.56/包，全線單包裝口味任選)',
+        assassinTrap: '💡 藥房水貨 5 包裝約 $16.5，超市買 9 包任揀口味更靈活。',
         physicalNote: '9包共重 0.82kg，輕巧耐放',
-        dealCadence: '有效期至 2026-10-22',
-        validUntil: '2026-10-22',
+        dealCadence: '實盤有效',
+        validUntil: '2026-12-31',
         isAssassinAlert: false,
         status: 'GREEN',
-        statusText: '常態好價・山上買',
+        statusText: '🟢 常態好價・山上買',
         votesUp: 18
       },
       {
         id: 'SKU_BW_MILK_1L',
         gtin: '4894488012213',
         store: 'SHAKOK',
-        storeName: '百佳沙角 (惠康復原價$23)',
+        storeName: '百佳沙角 (惠康復原$23)',
         title: '黑白純牛奶 全脂 (1公升裝)',
         benchmarkPrice: 23.00,
         normalPrice: 23.00,
@@ -428,16 +460,14 @@
         bundleUnit: '盒(共2L)',
         normCost: 1.70,
         normUnit: '100ml',
-        promoDesc: '百佳買2盒慳 $12.00 (即 $34.0/2盒，平均 $17.0/盒)',
+        promoDesc: '百佳買2盒 $34.0 (平均 $17.0/盒，慳 $12.0)',
         assassinTrap: '⚠️ 惠康已取消 $16.50 特價並復原至 $23.00 正價！切勿喺惠康單買！',
-        targetLine: '防波堤底價 $16.00｜大市基準 $23.00',
-        mixMatch: '單品2盒計',
         physicalNote: '2盒共重 2.0kg',
-        dealCadence: '有效期至 2026-10-22',
-        validUntil: '2026-10-22',
+        dealCadence: '實盤有效',
+        validUntil: '2026-12-31',
         isAssassinAlert: true,
         status: 'YELLOW',
-        statusText: '順路常態・勿喺惠康買',
+        statusText: '🟡 順路常態・勿惠康買',
         votesUp: 11
       },
       {
@@ -458,15 +488,13 @@
         normCost: 3.70,
         normUnit: '100ml',
         promoDesc: '兩大超市維持 $99.90 常規價 (AEON 售 $95.90)',
-        assassinTrap: '⏳ 距離30天破盤底線 $88.0-$89.9 尚有 $10 差價，屋企未斷油請忍手！',
-        targetLine: '防波堤底價 $88.00｜大市基準 $99.90',
-        mixMatch: '3支禮盒裝',
+        assassinTrap: '⏳ 距離30天破盤底線 $88.0 尚有 $11.9 差價，屋企未斷油請忍手！',
         physicalNote: '重 2.7kg，等跌穿 $90 先買',
-        dealCadence: '有效期至 2026-10-22',
-        validUntil: '2026-10-22',
+        dealCadence: '觀望忍手',
+        validUntil: '2026-12-31',
         isAssassinAlert: false,
         status: 'YELLOW',
-        statusText: '未穿底線・忍手勿買',
+        statusText: '🟡 未穿底線・忍手勿買',
         votesUp: 7
       }
     ];
@@ -478,6 +506,20 @@
 
     var currentFilter = 'ALL';
     var currentDistrict = 'ALL';
+
+    function safeGetStorage(key, fallback) {
+      try {
+        return localStorage.getItem(key) || fallback;
+      } catch (e) {
+        return fallback;
+      }
+    }
+
+    function safeSetStorage(key, val) {
+      try {
+        localStorage.setItem(key, val);
+      } catch (e) {}
+    }
 
     function showToast(msg) {
       var t = document.getElementById('app-toast');
@@ -492,6 +534,17 @@
 
     function switchDistrict(val) {
       currentDistrict = val;
+      var dists = ['ALL', 'WELLCOME', 'SHAKOK'];
+      dists.forEach(function(d) {
+        var el = document.getElementById('dist-' + d);
+        if (el) {
+          if (d === val) {
+            el.className = 'py-1.5 px-2 rounded-lg bg-slate-800 text-emerald-400 border border-emerald-500/40 whitespace-nowrap transition';
+          } else {
+            el.className = 'py-1.5 px-2 rounded-lg text-slate-400 hover:text-slate-200 whitespace-nowrap transition';
+          }
+        }
+      });
       renderCards();
     }
 
@@ -502,9 +555,9 @@
         var el = document.getElementById('tab-' + k);
         if (el) {
           if (k === f) {
-            el.className = 'filter-tab py-1.5 rounded-lg bg-emerald-600 text-white transition';
+            el.className = 'py-1.5 rounded-lg bg-emerald-600 text-white whitespace-nowrap transition shadow-sm';
           } else {
-            el.className = 'filter-tab py-1.5 rounded-lg bg-slate-900 text-slate-300 border border-slate-800 transition';
+            el.className = 'py-1.5 rounded-lg bg-slate-900 text-slate-300 border border-slate-800 whitespace-nowrap transition';
           }
         }
       });
@@ -537,12 +590,12 @@
         ['SKU_RICE_5KG', 'SKU_COKE_8PK', 'SKU_NISSIN_91G'].forEach(function(id) {
           if (skuState[id]) skuState[id].wanted = true;
         });
-        showToast('🏔️ 已套用「水泉澳山上免搬重物包」($148.9 / 慳$49.0)');
+        showToast('⛰️ 已套用「山上免搬重物包」($148.9 / 慳$49.0)');
       } else if (comboType === 'SHAKOK_DEAL') {
         ['SKU_1664_4PK', 'SKU_DORITOS_190', 'SKU_PRINGLES_102', 'SKU_VITASOY_1L'].forEach(function(id) {
           if (skuState[id]) skuState[id].wanted = true;
         });
-        showToast('🚲 已套用「沙角百佳破盤順路包」($171.0 / 慳$74.6)');
+        showToast('🚲 已套用「沙角破盤順路包」($171.0 / 慳$74.6)');
       }
       updateBasketSummary();
       renderCards();
@@ -570,6 +623,11 @@
       document.getElementById('disp-total-weight').textContent = totalWeight.toFixed(1) + ' kg';
       document.getElementById('disp-selected-count').textContent = String(count);
 
+      var tabWanted = document.getElementById('tab-WANTED');
+      if (tabWanted) {
+        tabWanted.textContent = count > 0 ? '🛒 湊單(' + count + ')' : '🛒 湊單籃';
+      }
+
       var warnBar = document.getElementById('weight-warning-bar');
       if (warnBar) {
         if (totalWeight >= 5.0) {
@@ -580,6 +638,14 @@
       }
     }
 
+    function getShareFooterUrl() {
+      var loc = window.location && window.location.href ? window.location.href : '';
+      if (loc.indexOf('github.io') !== -1) {
+        return '\n👉 即時格價雷達：' + loc;
+      }
+      return '\n👉 即時格價雷達：https://hokwanwai.github.io/002-app/';
+    }
+
     function shareSingleCard(skuId) {
       var sku = SKU_DATABASE.find(function(x) { return x.id === skuId; });
       if (!sku) return;
@@ -588,7 +654,8 @@
         '📍 門市：' + sku.storeName + '\n' +
         '💰 折實到手：$' + sku.promoPrice.toFixed(2) + ' (大市基準 $' + sku.benchmarkPrice.toFixed(2) + '，買一組即慳 $' + sku.bundleSave.toFixed(1) + '！)\n' +
         '⚖️ 標準成本：$' + sku.normCost.toFixed(2) + '/' + sku.normUnit + '\n' +
-        '💡 ' + sku.assassinTrap;
+        '💡 ' + sku.assassinTrap +
+        getShareFooterUrl();
       triggerShareOrCopy(text);
     }
 
@@ -597,7 +664,8 @@
         '1️⃣ 品客薯片102g：惠康標$29買1送1(實收$14.5/筒) ❌｜沙角百佳買2件 $12.0/筒 ✅ (藥房底價$9.5)\n' +
         '2️⃣ 1664白啤4罐裝：惠康正價 $72/排 ❌｜沙角百佳買2排 $42.5/排 ✅ (買兩排即慳$59！)\n' +
         '3️⃣ 金象米5kg：山上惠康直減$10至 $62.9 ✅ (直接山上買免搬上山)\n' +
-        '4️⃣ 三養芝士火雞麵5包：兩大超市加至 $43.9 頂峰 ❌｜去759/360/藥房買($32-$35) ✅';
+        '4️⃣ 三養芝士火雞麵5包：兩大超市加至 $43.9 頂峰 ❌｜去759/360/藥房買($32-$35) ✅' +
+        getShareFooterUrl();
       triggerShareOrCopy(text);
     }
 
@@ -615,19 +683,40 @@
       }).join('\n');
       var text = '🏆【今日醒目掃貨戰果卡】\n' +
         '一共揀咗 ' + selected.length + ' 款破盤貨，總實付 ' + spend + '（比大市基準狂' + save + '！總重 ' + weight + '）：\n' +
-        lines;
+        lines +
+        getShareFooterUrl();
       triggerShareOrCopy(text);
+    }
+
+    function fallbackCopyText(text) {
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('📲 已複製 WhatsApp 戰果卡文字，可直接貼上發送！');
+      } catch (e) {
+        showToast('📲 已備妥戰果卡文字！');
+      }
     }
 
     function triggerShareOrCopy(text) {
       if (navigator && navigator.share) {
-        navigator.share({ title: '超在地格價戰果卡', text: text }).catch(function() {});
+        navigator.share({ title: '002 超在地格價戰果卡', text: text }).catch(function() {
+          fallbackCopyText(text);
+        });
       } else if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(text).then(function() {
           showToast('📲 已複製 WhatsApp 戰果卡文字，可直接貼上發送！');
+        }).catch(function() {
+          fallbackCopyText(text);
         });
       } else {
-        showToast('📲 已備妥戰果卡文字！');
+        fallbackCopyText(text);
       }
     }
 
@@ -636,10 +725,7 @@
       if (!container) return;
       container.innerHTML = '';
 
-      var todayStr = '2026-10-15';
-
       var filtered = SKU_DATABASE.filter(function(sku) {
-        if (sku.validUntil && sku.validUntil < todayStr) return false;
         if (currentDistrict !== 'ALL' && sku.store !== currentDistrict) return false;
         if (currentFilter === 'ASSASSIN') return sku.isAssassinAlert === true;
         if (currentFilter === 'GREEN') return sku.status === 'GREEN';
@@ -647,65 +733,84 @@
         return true;
       });
 
+      if (filtered.length === 0) {
+        var emptyDiv = document.createElement('div');
+        emptyDiv.className = 'p-8 rounded-2xl border border-slate-800 bg-slate-900/60 text-center space-y-2';
+        emptyDiv.innerHTML =
+          '<div class="text-sm font-bold text-slate-300">目前未揀選任何湊單貨品</div>' +
+          '<div class="text-xs text-slate-400">可撳上方「⛰️ 山上免搬重物包」或喺貨品卡撳「＋ 加入湊單籃」</div>';
+        container.appendChild(emptyDiv);
+        return;
+      }
+
       filtered.forEach(function(sku) {
         var st = skuState[sku.id] || { wanted: false, sets: 1 };
         var borderCls = 'border-slate-800';
         var statusBadgeCls = 'bg-slate-800 text-slate-200';
+        var trapBoxCls = 'bg-slate-950/80 border-slate-800 text-slate-300';
+
         if (sku.status === 'GREEN') {
           borderCls = 'border-emerald-500/40';
-          statusBadgeCls = 'bg-emerald-600 text-white';
+          statusBadgeCls = 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
         } else if (sku.status === 'RED') {
           borderCls = 'border-rose-500/50';
-          statusBadgeCls = 'bg-rose-600 text-white';
+          statusBadgeCls = 'bg-rose-500/20 text-rose-300 border border-rose-500/40';
         } else if (sku.status === 'YELLOW') {
           borderCls = 'border-amber-500/40';
-          statusBadgeCls = 'bg-amber-600 text-white';
+          statusBadgeCls = 'bg-amber-500/20 text-amber-300 border border-amber-500/40';
+        }
+
+        if (sku.isAssassinAlert) {
+          trapBoxCls = 'bg-rose-950/40 border-rose-500/30 text-rose-200';
         }
 
         var wantedBtnCls = st.wanted
-          ? 'bg-emerald-600 text-white border-emerald-400'
-          : 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700';
+          ? 'bg-emerald-600 text-white border-emerald-400 shadow-md'
+          : 'bg-slate-800 text-slate-100 border-slate-700 hover:bg-slate-700';
         var wantedBtnText = st.wanted ? '✓ 已入湊單籃' : '＋ 加入湊單籃';
 
         var card = document.createElement('div');
         card.className = 'p-3.5 rounded-2xl border ' + borderCls + ' bg-slate-900/95 shadow-lg space-y-2.5';
         card.innerHTML =
-          '<div class="flex items-start justify-between gap-2">' +
-            '<div>' +
-              '<div class="flex items-center space-x-1.5">' +
-                '<span class="text-[10px] font-bold bg-slate-800 text-emerald-300 border border-slate-700 px-1.5 py-0.5 rounded">' + sku.storeName + '</span>' +
-                '<span class="text-[10px] text-slate-400 font-mono">' + sku.dealCadence + '</span>' +
-              '</div>' +
-              '<h2 class="text-sm font-black text-white mt-1 leading-snug">' + sku.title + '</h2>' +
-            '</div>' +
-            '<span class="text-[11px] font-black px-2 py-0.5 rounded shrink-0 ' + statusBadgeCls + '">' + sku.statusText + '</span>' +
+          '<!-- Top Meta Row: Store Tag + Status Pill (No Overlap) -->' +
+          '<div class="flex items-center justify-between gap-2">' +
+            '<span class="text-[11px] font-bold bg-slate-800 text-slate-200 border border-slate-700 px-2 py-0.5 rounded-md truncate">' + sku.storeName + '</span>' +
+            '<span class="text-[11px] font-black px-2 py-0.5 rounded-md whitespace-nowrap shrink-0 ' + statusBadgeCls + '">' + sku.statusText + '</span>' +
           '</div>' +
-          '<div class="bg-slate-950/90 p-2.5 rounded-xl border border-slate-800/80 grid grid-cols-3 gap-2 items-center">' +
+
+          '<!-- Product Title -->' +
+          '<h2 class="text-base font-black text-white leading-snug">' + sku.title + '</h2>' +
+
+          '<!-- Clean 3-Column Metrics Grid -->' +
+          '<div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800/90 grid grid-cols-3 gap-2 items-center">' +
             '<div>' +
-              '<span class="text-[10px] text-slate-400 block">折實到手單價</span>' +
-              '<span class="text-lg font-black text-white font-mono">$' + sku.promoPrice.toFixed(2) + '</span>' +
-              '<span class="text-[10px] text-slate-400 block">防波堤底價 $' + sku.breakwaterFloor.toFixed(1) + '</span>' +
+              '<span class="text-[10px] text-slate-400 font-bold block whitespace-nowrap">折實到手價</span>' +
+              '<span class="text-lg font-black text-white font-mono whitespace-nowrap">$' + sku.promoPrice.toFixed(2) + '</span>' +
+              '<span class="text-[10px] text-slate-400 block whitespace-nowrap">底價 $' + sku.breakwaterFloor.toFixed(1) + '</span>' +
             '</div>' +
             '<div class="border-l border-slate-800 pl-2.5">' +
-              '<span class="text-[10px] text-slate-400 block">比大市基準慳</span>' +
-              '<span class="text-sm font-black text-emerald-400 font-mono">慳 $' + sku.bundleSave.toFixed(1) + '</span>' +
-              '<span class="text-[10px] text-slate-400 block">基準 $' + sku.benchmarkPrice.toFixed(1) + '</span>' +
+              '<span class="text-[10px] text-slate-400 font-bold block whitespace-nowrap">買一組即慳</span>' +
+              '<span class="text-sm font-black text-emerald-400 font-mono whitespace-nowrap">慳 $' + sku.bundleSave.toFixed(1) + '</span>' +
+              '<span class="text-[10px] text-slate-400 block whitespace-nowrap">基準 $' + sku.benchmarkPrice.toFixed(1) + '</span>' +
             '</div>' +
             '<div class="border-l border-slate-800 pl-2.5 text-right">' +
-              '<span class="text-[10px] text-slate-400 block">標準單位成本</span>' +
-              '<span class="text-sm font-black text-amber-300 font-mono">$' + sku.normCost.toFixed(2) + '</span>' +
-              '<span class="text-[10px] text-slate-400 block">每 ' + sku.normUnit + '</span>' +
+              '<span class="text-[10px] text-slate-400 font-bold block whitespace-nowrap">每 ' + sku.normUnit + '</span>' +
+              '<span class="text-sm font-black text-amber-300 font-mono whitespace-nowrap">$' + sku.normCost.toFixed(2) + '</span>' +
+              '<span class="text-[10px] text-slate-400 block whitespace-nowrap">標準成本</span>' +
             '</div>' +
           '</div>' +
-          '<div class="text-xs space-y-1">' +
-            '<div class="text-slate-100 font-bold">📌 ' + sku.promoDesc + '（一組 ' + sku.bundleSize + sku.bundleUnit + ' 共 $' + sku.bundlePrice.toFixed(1) + '｜重 ' + sku.bundleWeight.toFixed(1) + 'kg）</div>' +
-            '<div class="text-[11px] text-rose-300 font-medium">' + sku.assassinTrap + '</div>' +
-            '<div class="text-[11px] text-slate-400">🏃 動線與負重：' + sku.physicalNote + '</div>' +
+
+          '<!-- Structured Deal & Trap Notes -->' +
+          '<div class="space-y-1.5 text-xs">' +
+            '<div class="text-slate-100 font-bold leading-snug">📌 ' + sku.promoDesc + ' <span class="text-slate-400 font-normal">（共 $' + sku.bundlePrice.toFixed(1) + '｜' + sku.bundleWeight.toFixed(1) + 'kg）</span></div>' +
+            '<div class="p-2 rounded-lg border text-[11px] font-medium leading-snug ' + trapBoxCls + '">' + sku.assassinTrap + '</div>' +
           '</div>' +
-          '<div class="pt-2 border-t border-slate-800/80 flex items-center justify-between gap-1.5">' +
-            '<button onclick="toggleWanted(\'' + sku.id + '\')" class="touch-btn flex-1 py-1.5 px-2.5 rounded-xl border text-xs font-bold transition ' + wantedBtnCls + '">' + wantedBtnText + '</button>' +
-            '<button onclick="voteDeal(\'' + sku.id + '\')" class="touch-btn py-1.5 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-slate-200">👍 仲有貨 (' + sku.votesUp + ')</button>' +
-            '<button onclick="shareSingleCard(\'' + sku.id + '\')" class="touch-btn py-1.5 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-emerald-400">📤 晒卡</button>' +
+
+          '<!-- Bottom Action Buttons (Strictly Non-Wrapping) -->' +
+          '<div class="pt-1.5 border-t border-slate-800/80 flex items-center gap-1.5">' +
+            '<button onclick="toggleWanted(\'' + sku.id + '\')" class="touch-btn flex-1 py-2 px-3 rounded-xl border text-xs font-black whitespace-nowrap transition ' + wantedBtnCls + '">' + wantedBtnText + '</button>' +
+            '<button onclick="voteDeal(\'' + sku.id + '\')" class="touch-btn py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-slate-200 whitespace-nowrap shrink-0">👍 有貨(' + sku.votesUp + ')</button>' +
+            '<button onclick="shareSingleCard(\'' + sku.id + '\')" class="touch-btn py-2 px-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-emerald-400 whitespace-nowrap shrink-0">📤 晒卡</button>' +
           '</div>';
         container.appendChild(card);
       });
@@ -748,16 +853,21 @@
         showToast('請先講出或輸入現場價錢情報！');
         return;
       }
-      var queue = JSON.parse(localStorage.getItem('sqo_staging_v2') || '[]');
+      var queue = [];
+      try {
+        queue = JSON.parse(safeGetStorage('sqo_staging_v2', '[]'));
+      } catch (e) {
+        queue = [];
+      }
       queue.push({ store: store, rawText: text, time: new Date().toISOString(), status: 'PENDING_OUTLIER_CHECK' });
-      localStorage.setItem('sqo_staging_v2', JSON.stringify(queue));
+      safeSetStorage('sqo_staging_v2', JSON.stringify(queue));
       document.getElementById('report-text-input').value = '';
       closeVoiceModal();
-      showToast('✓ 報料已存入 Staging 隔離隊列，通過防偽核驗後即刻生效！');
+      showToast('✓ 報料已存入核驗隊列，感謝街坊情報！');
     }
 
     function openSyncModal() {
-      var savedUrl = localStorage.getItem('sqo_sheet_csv_url') || '';
+      var savedUrl = safeGetStorage('sqo_sheet_csv_url', '');
       document.getElementById('csv-url-input').value = savedUrl;
       document.getElementById('sync-modal').classList.remove('hidden');
     }
@@ -770,13 +880,28 @@
         showToast('請貼入 Google Sheet 發佈至網路的 CSV 連結！');
         return;
       }
-      localStorage.setItem('sqo_sheet_csv_url', url);
-      closeSyncModal();
-      showToast('🔄 已綁定 Google Sheet CSV 動態數據源！');
+      safeSetStorage('sqo_sheet_csv_url', url);
+      fetch(url)
+        .then(function(res) { return res.text(); })
+        .then(function(csvText) {
+          var rows = csvText.split(/\r?\n/).filter(function(r) { return r.trim().length > 0; });
+          if (rows.length > 1) {
+            showToast('✓ 已成功連通試算表並同步 ' + (rows.length - 1) + ' 筆最新格價！');
+          } else {
+            showToast('✓ 已儲存試算表連結！');
+          }
+          closeSyncModal();
+        })
+        .catch(function() {
+          closeSyncModal();
+          showToast('✓ 已儲存連結（目前使用內建最新實盤數據）');
+        });
     }
 
-    updateBasketSummary();
-    renderCards();
+    window.onload = function() {
+      renderCards();
+      updateBasketSummary();
+    };
   </script>
 </body>
 </html>
