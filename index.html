@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>002 智能格價與動線決策系統 V3.0</title>
+  <title>沙田街坊格價手冊 V4.0</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="002格價">
+  <meta name="apple-mobile-web-app-title" content="沙田格價">
   <meta name="theme-color" content="#ffffff">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2224%22 fill=%22%230f172a%22/><text x=%2250%22 y=%2266%22 font-size=%2248%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22sans-serif%22 font-weight=%22800%22>002</text></svg>">
-  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2224%22 fill=%22%230f172a%22/><text x=%2250%22 y=%2266%22 font-size=%2248%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22sans-serif%22 font-weight=%22800%22>002</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2224%22 fill=%22%23059669%22/><text x=%2250%22 y=%2268%22 font-size=%2252%22 text-anchor=%22middle%22>🛒</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2224%22 fill=%22%23059669%22/><text x=%2250%22 y=%2268%22 font-size=%2252%22 text-anchor=%22middle%22>🛒</text></svg>">
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+HK:wght@400;500;700;900&display=swap" rel="stylesheet">
   <style>
@@ -31,180 +31,190 @@
     }
   </style>
 </head>
-<body class="bg-[#f4f6f8] text-slate-900 pb-32 antialiased selection:bg-slate-900 selection:text-white">
+<body class="bg-[#f4f6f8] text-slate-900 pb-36 antialiased selection:bg-emerald-600 selection:text-white">
 
-  <!-- Subtle Floating Toast (Replaces native alert/prompt) -->
-  <div id="app-toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs font-medium px-4 py-2.5 rounded-full shadow-lg hidden transition-all w-11/12 max-w-xs text-center">
+  <!-- Subtle Floating Toast -->
+  <div id="app-toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-lg hidden transition-all w-11/12 max-w-xs text-center">
     <span id="app-toast-text">已更新清單</span>
   </div>
 
   <!-- Mobile App Container -->
   <div class="max-w-md mx-auto min-h-screen bg-[#f4f6f8] flex flex-col relative sm:border-x sm:border-slate-200/80 sm:shadow-sm">
 
-    <!-- Clean Daylight Sticky Header (Apple / Trolley.co.uk Minimalist Aesthetic) -->
-    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-4 pt-3 pb-2.5 space-y-2.5">
-      <!-- Row 1: Brand Title + Data Backend Status Button -->
+    <!-- Sticky Header: District + Store Brand + Category Filter -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-3.5 pt-2.5 pb-2 space-y-2 shadow-2xs">
+      <!-- Row 1: Friendly Title + Search Input + Discreet Settings Button -->
       <div class="flex items-center justify-between gap-2">
-        <div class="flex items-center gap-2 min-w-0">
-          <div class="w-7 h-7 rounded-lg bg-slate-900 text-white flex items-center justify-center font-extrabold text-xs tracking-tighter shrink-0">002</div>
-          <div class="min-w-0">
+        <div class="flex items-center gap-2 min-w-0 shrink-0">
+          <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-base shadow-2xs shrink-0">🛒</div>
+          <div>
             <div class="flex items-center gap-1.5">
-              <h1 class="text-sm font-bold tracking-tight text-slate-900 whitespace-nowrap" id="app-dataset-title">智能格價與動線中樞</h1>
-              <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-1.5 py-0.5 rounded whitespace-nowrap shrink-0" id="db-mode-badge">Supabase 雲端連通</span>
+              <h1 class="text-sm font-extrabold tracking-tight text-slate-900 whitespace-nowrap">沙田街坊格價</h1>
+              <span id="db-mode-badge" class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-1.5 py-0.5 rounded-md whitespace-nowrap">雲端已連通</span>
             </div>
           </div>
         </div>
-        <button onclick="openBackendModal()" class="bg-slate-100 hover:bg-slate-200/80 active:scale-95 text-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap shrink-0 flex items-center gap-1.5 transition">
-          <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/></svg>
-          <span>數據源設定</span>
-        </button>
+
+        <div class="flex items-center gap-1.5 flex-1 max-w-[180px]">
+          <input type="search" id="search-input" oninput="onSearchInput(this.value)" placeholder="搜尋薯片、米、啤酒..." class="w-full bg-slate-100 focus:bg-white border border-transparent focus:border-slate-300 rounded-xl px-2.5 py-1.5 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none transition">
+          <button onclick="openBackendModal()" title="雲端設定" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200/80 text-slate-600 flex items-center justify-center text-xs shrink-0 transition">
+            ⚙️
+          </button>
+        </div>
       </div>
 
-      <!-- Row 2: Dynamic Geospatial Zone Switcher (Rendered from Locations Table) -->
-      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar" id="zone-bar"></div>
+      <!-- Row 2: 地區選擇 (Estate / Area Selector) -->
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+        <span class="text-[11px] font-bold text-slate-400 shrink-0 pr-0.5">地區:</span>
+        <div class="flex items-center gap-1 overflow-x-auto no-scrollbar" id="area-bar"></div>
+      </div>
 
-      <!-- Row 3: Natural Category & Sort Navigation (No Garish 4-Color Traffic Lights) -->
-      <div class="flex items-center justify-between gap-2 pt-0.5">
+      <!-- Row 3: 商舖選擇 (Store Brand Selector - Wellcome, 360, 759, 7-11, Market/Pharmacy) -->
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+        <span class="text-[11px] font-bold text-slate-400 shrink-0 pr-0.5">商舖:</span>
+        <div class="flex items-center gap-1 overflow-x-auto no-scrollbar" id="chain-bar"></div>
+      </div>
+
+      <!-- Row 4: 貨品分類與排序 -->
+      <div class="flex items-center justify-between gap-2 pt-0.5 border-t border-slate-100">
         <div class="flex items-center gap-1 overflow-x-auto no-scrollbar" id="category-bar"></div>
-        <button onclick="cycleSortMode()" id="sort-btn" class="text-[11px] font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200/70 px-2.5 py-1 rounded-md whitespace-nowrap shrink-0 flex items-center gap-1 transition">
-          <svg class="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/></svg>
-          <span id="sort-label">按實慳額</span>
+        <button onclick="cycleSortMode()" id="sort-btn" class="text-[11px] font-bold text-slate-700 bg-slate-100 hover:bg-slate-200/70 px-2.5 py-1 rounded-lg whitespace-nowrap shrink-0 transition">
+          <span id="sort-label">按最抵買</span>
         </button>
       </div>
     </header>
 
-    <!-- Dynamic Personal Footprint Feedback Banner (Shows items user interacted with previously) -->
-    <section id="footprint-section" class="px-4 mt-3 hidden">
-      <div class="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-sm space-y-2">
+    <!-- Active Shopper Context Banner (Tells user what mode they are in) -->
+    <section id="shopper-mode-banner" class="px-3.5 mt-2.5">
+      <div id="shopper-mode-box" class="bg-emerald-50/90 border border-emerald-200/90 rounded-2xl px-3.5 py-2.5 flex items-center justify-between gap-2">
+        <div class="min-w-0">
+          <div class="text-xs font-extrabold text-emerald-950" id="shopper-mode-title">全區格價視角（揀上面「地區」或「商舖」即睇單店買邊樣最抵）</div>
+          <div class="text-[11px] text-emerald-800/90 mt-0.5" id="shopper-mode-subtitle">不用為慳一蚊走三間舖！揀你身處嘅商舖，即睇邊樣「順手買埋」、邊樣「過隔離舖買」。</div>
+        </div>
+        <button onclick="resetFilters()" id="reset-filter-btn" class="hidden text-[11px] font-bold bg-white text-slate-700 border border-slate-200 px-2.5 py-1 rounded-lg whitespace-nowrap shrink-0">
+          重設
+        </button>
+      </div>
+    </section>
+
+    <!-- Live Cloud Community Price Feed (Reads directly from Supabase staging_queue!) -->
+    <section id="cloud-feed-section" class="px-3.5 mt-2.5 hidden">
+      <div class="bg-white border border-slate-200/90 rounded-2xl p-3 shadow-2xs space-y-1.5">
         <div class="flex items-center justify-between gap-2">
           <div class="flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
-            <span class="text-xs font-bold text-slate-800">個人足跡動態反饋</span>
-            <span class="text-[11px] text-slate-400">根據你關注過的貨品自動追蹤</span>
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span class="text-xs font-extrabold text-slate-800">街坊現場最新報價 (雲端實時同步)</span>
           </div>
-          <button onclick="clearFootprints()" class="text-[11px] text-slate-400 hover:text-slate-600 whitespace-nowrap">清除記憶</button>
+          <button onclick="openReportModal()" class="text-[11px] font-bold text-emerald-700 hover:underline whitespace-nowrap">＋ 我又要報價</button>
         </div>
-        <div id="footprint-list" class="space-y-1.5"></div>
+        <div id="cloud-feed-list" class="flex gap-2 overflow-x-auto no-scrollbar pt-0.5"></div>
       </div>
     </section>
 
-    <!-- Ergonomic Route Presets (Dynamic Route Optimization Cards) -->
-    <section class="px-4 mt-3">
-      <div class="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-sm space-y-2.5">
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-xs font-bold text-slate-800">人體動線與負重最優組合</h2>
-            <p class="text-[11px] text-slate-500">自動平衡「跨店價差收益」與「步行爬坡體力阻抗」</p>
-          </div>
-          <button onclick="shareSummaryReport()" class="text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100/80 px-2.5 py-1 rounded-lg whitespace-nowrap transition">
-            分享今日摘要
-          </button>
+    <!-- Personal Footprint Banner (Collapsible / Compact) -->
+    <section id="footprint-section" class="px-3.5 mt-2.5 hidden">
+      <div class="bg-white border border-slate-200/90 rounded-2xl p-3 shadow-2xs space-y-1.5">
+        <div class="flex items-center justify-between gap-2">
+          <span class="text-xs font-bold text-slate-700">📌 你最近留意過嘅貨品</span>
+          <button onclick="clearFootprints()" class="text-[11px] text-slate-400 hover:text-slate-600">清除</button>
         </div>
-        <div class="grid grid-cols-2 gap-2" id="route-presets-container"></div>
+        <div id="footprint-list" class="space-y-1"></div>
       </div>
     </section>
 
-    <!-- Main Product Comparison Cards List -->
-    <main class="flex-1 px-4 mt-3 space-y-2.5" id="cards-container"></main>
+    <!-- Main Product Cards List -->
+    <main class="flex-1 px-3.5 mt-2.5 space-y-2.5" id="cards-container"></main>
 
-    <!-- Clean Bottom Sticky Bar (Shopping Basket + Ergonomic Load Meter + Field Report) -->
-    <footer class="fixed bottom-0 left-1/2 -translate-x-1/2 max-w-md w-full bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-2.5 z-40 shadow-lg">
+    <!-- Bottom Sticky Bar: One-Stop vs Multi-Store Comparison + Field Price Report -->
+    <footer class="fixed bottom-0 left-1/2 -translate-x-1/2 max-w-md w-full bg-white/95 backdrop-blur-md border-t border-slate-200 px-3.5 py-2.5 z-40 shadow-lg">
       <div class="flex items-center justify-between gap-2">
         <div class="min-w-0">
-          <div class="flex items-baseline gap-2">
-            <span class="text-xs text-slate-500 font-medium whitespace-nowrap">清單實付</span>
-            <span class="text-lg font-extrabold text-slate-900 font-mono whitespace-nowrap" id="disp-total-spend">$0.0</span>
-            <span class="text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 px-1.5 py-0.5 rounded font-mono whitespace-nowrap" id="disp-total-save">比均價慳 $0.0</span>
+          <div class="flex items-baseline gap-1.5 flex-wrap">
+            <span class="text-xs text-slate-500 font-semibold whitespace-nowrap" id="basket-mode-label">已揀清單實付</span>
+            <span class="text-lg font-black text-slate-900 font-mono whitespace-nowrap" id="disp-total-spend">$0.0</span>
+            <span class="text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 px-1.5 py-0.5 rounded font-mono whitespace-nowrap" id="disp-total-save">比常規價慳 $0.0</span>
           </div>
-          <div class="text-[11px] text-slate-500 whitespace-nowrap mt-0.5 flex items-center gap-1.5">
-            <span>已選 <b id="disp-selected-count" class="text-slate-800">0</b> 項</span>
+          <div class="text-[11px] text-slate-500 whitespace-nowrap mt-0.5 flex items-center gap-1.5 overflow-x-auto no-scrollbar" id="basket-subline">
+            <span>已揀 <b id="disp-selected-count" class="text-slate-800">0</b> 樣</span>
             <span>·</span>
-            <span>總負重 <b id="disp-total-weight" class="text-slate-800 font-mono">0.0 kg</b></span>
-            <span id="ergonomic-load-tag" class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.2 rounded font-medium">空手輕便</span>
+            <span>總重 <b id="disp-total-weight" class="text-slate-800 font-mono">0.0 kg</b></span>
+            <span id="ergonomic-load-tag" class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-medium">未揀貨品</span>
           </div>
         </div>
         <div class="flex items-center gap-1.5 shrink-0">
-          <button onclick="shareBasketBragCard()" class="touch-target bg-slate-900 hover:bg-slate-800 active:scale-95 text-white text-xs font-semibold px-3 py-2 rounded-xl whitespace-nowrap transition">
-            匯出清單
+          <button onclick="shareBasketBragCard()" class="touch-target bg-slate-900 hover:bg-slate-800 active:scale-95 text-white text-xs font-bold px-3 py-2 rounded-xl whitespace-nowrap transition">
+            📋 複製清單
           </button>
-          <button onclick="openReportModal()" class="touch-target bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-xs font-semibold px-3 py-2 rounded-xl whitespace-nowrap transition">
-            現場報價
+          <button onclick="openReportModal()" class="touch-target bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-xs font-bold px-3 py-2 rounded-xl whitespace-nowrap transition">
+            📢 現場報價
           </button>
         </div>
       </div>
-      <div id="weight-warning-bar" class="text-[11px] bg-amber-50 border border-amber-200 text-amber-800 font-medium px-3 py-1.5 rounded-lg mt-2 hidden">
-        體力工學提示：負重已逾 5.0kg 單手疲勞臨界點，建議優先於終點屋苑商場自提或使用買餸車。
-      </div>
     </footer>
 
-    <!-- Modal 1: Field Price Reporting (Writes to Staging Queue DB) -->
+    <!-- Modal 1: Field Price Reporting (Writes to Supabase staging_queue) -->
     <div id="report-modal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-end sm:items-center justify-center p-4 hidden">
       <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-sm p-4 space-y-3.5 shadow-xl">
         <div class="flex items-center justify-between pb-2 border-b border-slate-100">
           <div>
-            <h3 class="text-sm font-bold text-slate-900">現場情報回傳 (Staging Queue)</h3>
-            <p class="text-[11px] text-slate-500">免打字快速記錄門市實價，支援語音或點選</p>
+            <h3 class="text-sm font-extrabold text-slate-900">📢 現場報價（直通雲端資料庫）</h3>
+            <p class="text-[11px] text-slate-500">見到筍價或伏價？揀間舖再打字或語音即刻存檔</p>
           </div>
           <button onclick="closeReportModal()" class="text-slate-400 hover:text-slate-600 text-sm px-2 py-1">✕</button>
         </div>
 
-        <button onclick="startVoiceRecognition()" id="voice-record-btn" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition">
-          <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19 10v2a7 7 0 01-14 0v-2M12 19v4m-4 0h8"/></svg>
-          <span>按此廣東話語音輸入（例：沙角金城藥房可樂 3 蚊）</span>
+        <button onclick="startVoiceRecognition()" id="voice-record-btn" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition">
+          <span>🎙️ 按此用廣東話語音講出貨品同價錢</span>
         </button>
 
         <div class="space-y-1.5">
-          <div class="text-[11px] text-slate-500 font-medium">點選當前測試區真實門市：</div>
+          <div class="text-[11px] text-slate-500 font-bold">1. 點揀你身處嘅商舖：</div>
           <div class="grid grid-cols-2 gap-1.5" id="quick-store-chips"></div>
         </div>
 
         <div class="space-y-2 text-xs">
-          <input type="text" id="report-store-input" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 text-xs focus:outline-none focus:border-slate-400" placeholder="門市名稱">
-          <input type="text" id="report-text-input" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 text-xs focus:outline-none focus:border-slate-400" placeholder="商品與實價（例：品客薯片 $9.5/筒）">
+          <input type="text" id="report-store-input" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 text-xs font-semibold focus:outline-none focus:border-slate-400" placeholder="商舖名稱（例：水泉澳 惠康）">
+          <input type="text" id="report-text-input" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 text-xs focus:outline-none focus:border-slate-400" placeholder="貨品與價錢（例：卡樂B薯片 $5/包 100g）">
         </div>
 
-        <div id="staging-log-preview" class="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5 text-[11px] text-slate-600 max-h-24 overflow-y-auto hidden"></div>
+        <div id="staging-log-preview" class="bg-emerald-50/70 border border-emerald-200/80 rounded-xl p-2.5 text-[11px] text-slate-700 max-h-28 overflow-y-auto hidden"></div>
 
         <div class="flex gap-2 pt-1">
-          <button onclick="closeReportModal()" class="w-1/2 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-xs font-semibold">取消</button>
-          <button onclick="submitFieldReport()" class="w-1/2 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-semibold">寫入待審隊列</button>
+          <button onclick="closeReportModal()" class="w-1/2 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold">取消</button>
+          <button onclick="submitFieldReport()" class="w-1/2 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-bold">確認送出報價</button>
         </div>
       </div>
     </div>
 
-    <!-- Modal 2: Data Plane & Cloud Database Connection (Supabase / Google Sheet CSV) -->
+    <!-- Modal 2: Cloud Database Settings -->
     <div id="backend-modal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-end sm:items-center justify-center p-4 hidden">
       <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-sm p-4 space-y-3.5 shadow-xl">
         <div class="flex items-center justify-between pb-2 border-b border-slate-100">
           <div>
-            <h3 class="text-sm font-bold text-slate-900">後台數據源與雲端 Database 設定</h3>
-            <p class="text-[11px] text-slate-500">架構解耦：支援 Supabase API 或 Google Sheet CSV</p>
+            <h3 class="text-sm font-bold text-slate-900">⚙️ 雲端資料庫連線設定</h3>
+            <p class="text-[11px] text-slate-500">已預設連通阿偉專屬 Supabase 雲端庫</p>
           </div>
           <button onclick="closeBackendModal()" class="text-slate-400 hover:text-slate-600 text-sm px-2 py-1">✕</button>
         </div>
 
         <div class="space-y-2.5 text-xs">
           <div>
-            <label class="block text-[11px] font-semibold text-slate-700 mb-1">1. Google Sheet 測試數據包 (CSV 網址)</label>
+            <label class="block text-[11px] font-semibold text-slate-700 mb-1">1. Supabase Project URL</label>
+            <input type="url" id="supabase-url-input" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 text-xs">
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-700 mb-1">2. Supabase Publishable Key</label>
+            <input type="text" id="supabase-key-input" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 text-xs font-mono">
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-700 mb-1">3. Google Sheet CSV 備用連結 (選填)</label>
             <input type="url" id="csv-url-input" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 text-xs" placeholder="https://docs.google.com/spreadsheets/d/e/.../pub?output=csv">
           </div>
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-700 mb-1">2. Supabase Project URL (選填・正規雲端庫)</label>
-            <input type="url" id="supabase-url-input" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 text-xs" placeholder="https://xyzcompany.supabase.co">
-          </div>
-          <div>
-            <label class="block text-[11px] font-semibold text-slate-700 mb-1">3. Supabase Anon Key (選填・公開讀寫金鑰)</label>
-            <input type="password" id="supabase-key-input" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 text-xs" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6...">
-          </div>
-        </div>
-
-        <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5 text-[11px] text-slate-600 leading-relaxed">
-          系統遵循「代碼與數據解耦」原則。未填外部連結時預設載入「沙田四邨實測數據包 #1（零百佳修正版）」；填入後即自動切換為雲端動態數據流。
         </div>
 
         <div class="flex gap-2 pt-1">
-          <button onclick="closeBackendModal()" class="w-1/2 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-xs font-semibold">關閉</button>
-          <button onclick="saveBackendConfig()" class="w-1/2 py-2.5 bg-slate-900 text-white rounded-xl text-xs font-semibold">儲存並同步</button>
+          <button onclick="closeBackendModal()" class="w-1/2 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold">關閉</button>
+          <button onclick="saveBackendConfig()" class="w-1/2 py-2.5 bg-slate-900 text-white rounded-xl text-xs font-bold">儲存並重新同步</button>
         </div>
       </div>
     </div>
@@ -213,248 +223,280 @@
 
   <script>
     // ============================================================================
-    // 002 V3.0 DECOUPLED SCIENTIFIC ARCHITECTURE (Engineered by 004)
-    // Pure Generic Engine: Brand x Location x Product x PriceEvent x UserFootprint
+    // 002 V4.0 SHOPPER-FIRST EDITION
+    // Designed around real human shopping: Pick Area + Pick Store Chain -> See everything sold there!
     // ============================================================================
 
-    // 1. Geospatial Zones & Real Stores Topology (Test Dataset #1: Sha Tin 4 Estates)
-    // Strictly verified: ZERO PARKnSHOP in Shui Chuen O, Sha Kok, Jat Min, Pok Hong!
-    var ZONES_TABLE = [
-      { id: 'ALL', label: '全部測試區', elevationNote: '全動線比價' },
-      { id: 'SCO_HILL', label: '水泉澳 (山上商場)', elevationNote: '半山高地・宜買重物搭𨋢' },
-      { id: 'VALLEY_3', label: '沙角/乙明/博康 (山下)', elevationNote: '山下平地・放工順路買輕貨' }
+    // 1. Estate / Area Filters (地區)
+    var AREAS_TABLE = [
+      { id: 'ALL', label: '全部地區' },
+      { id: 'SHUI_CHUEN_O', label: '水泉澳' },
+      { id: 'SHA_KOK', label: '沙角' },
+      { id: 'JAT_MIN', label: '乙明' },
+      { id: 'POK_HONG', label: '博康' }
     ];
 
-    var STORES_TABLE = [
-      { id: 'ST_SCO_WELLCOME', brand: '惠康超級廣場', location: '水泉澳商場', zone: 'SCO_HILL', type: 'SUPERMARKET' },
-      { id: 'ST_SCO_759', brand: '759 阿信屋', location: '水泉澳商場 G14', zone: 'SCO_HILL', type: 'SNACK_CHAIN' },
-      { id: 'ST_SCO_360', brand: '優品 360', location: '水泉澳商場', zone: 'SCO_HILL', type: 'SNACK_CHAIN' },
-      { id: 'ST_SK_PHARMACY', brand: '金城中西藥房', location: '沙角街市', zone: 'VALLEY_3', type: 'LOCAL_PHARMACY' },
-      { id: 'ST_SK_GROCERY', brand: '沙角街市糧油凍肉', location: '沙角街市', zone: 'VALLEY_3', type: 'WET_MARKET' },
-      { id: 'ST_JM_PHARMACY', brand: '乙明街坊藥房', location: '乙明邨商業街', zone: 'VALLEY_3', type: 'LOCAL_PHARMACY' },
-      { id: 'ST_PK_WELLCOME', brand: '博康惠康', location: '博康商場', zone: 'VALLEY_3', type: 'SUPERMARKET' }
+    // 2. Retail Store Chains (商舖品牌 — 惠康 / 優品360 / 759阿信屋 / 7-Eleven / 街市藥房)
+    var CHAINS_TABLE = [
+      { id: 'ALL', label: '全部商舖', badgeCls: 'bg-slate-100 text-slate-700 border-slate-200' },
+      { id: 'WELLCOME', label: '惠康', badgeCls: 'bg-rose-50 text-rose-700 border-rose-200' },
+      { id: 'BESTMART360', label: '優品360', badgeCls: 'bg-amber-50 text-amber-800 border-amber-200' },
+      { id: '759STORE', label: '759阿信屋', badgeCls: 'bg-purple-50 text-purple-700 border-purple-200' },
+      { id: '7ELEVEN', label: '7-Eleven', badgeCls: 'bg-emerald-50 text-emerald-800 border-emerald-200' },
+      { id: 'LOCAL_MARKET', label: '街市/藥房', badgeCls: 'bg-teal-50 text-teal-800 border-teal-200' }
+    ];
+
+    // 3. Real Stores Directory (Quick chips for reporting & matching)
+    var STORES_DIRECTORY = [
+      { id: 'ST_SCO_WELLCOME', area: 'SHUI_CHUEN_O', chain: 'WELLCOME', shortName: '水泉澳 惠康' },
+      { id: 'ST_SCO_360', area: 'SHUI_CHUEN_O', chain: 'BESTMART360', shortName: '水泉澳 優品360' },
+      { id: 'ST_SCO_759', area: 'SHUI_CHUEN_O', chain: '759STORE', shortName: '水泉澳 759阿信屋' },
+      { id: 'ST_SCO_711', area: 'SHUI_CHUEN_O', chain: '7ELEVEN', shortName: '水泉澳 7-Eleven' },
+      { id: 'ST_SK_PHARMACY', area: 'SHA_KOK', chain: 'LOCAL_MARKET', shortName: '沙角 金城藥房' },
+      { id: 'ST_SK_GROCERY', area: 'SHA_KOK', chain: 'LOCAL_MARKET', shortName: '沙角 街市糧油店' },
+      { id: 'ST_SK_711', area: 'SHA_KOK', chain: '7ELEVEN', shortName: '沙角 7-Eleven' },
+      { id: 'ST_JM_PHARMACY', area: 'JAT_MIN', chain: 'LOCAL_MARKET', shortName: '乙明 街坊藥房' },
+      { id: 'ST_PK_WELLCOME', area: 'POK_HONG', chain: 'WELLCOME', shortName: '博康 惠康' }
     ];
 
     var CATEGORIES_TABLE = [
-      { id: 'ALL', label: '全部' },
-      { id: 'STAPLE', label: '糧油米麵' },
-      { id: 'DRINK', label: '飲品啤酒' },
-      { id: 'SNACK', label: '零食點心' },
-      { id: 'BASKET', label: '已選清單' }
+      { id: 'ALL', label: '全部貨品' },
+      { id: 'SNACK', label: '🥔 零食薯片' },
+      { id: 'DRINK', label: '🍺 飲品啤酒' },
+      { id: 'STAPLE', label: '🍚 糧油米麵' },
+      { id: 'BASKET', label: '🛒 已揀清單' }
     ];
 
-    // 2. Multi-Store Product & Price Events Dataset (Trolley.co.uk style side-by-side comparison)
+    // 4. Comprehensive Product Dataset (Includes 阿偉's newly reported Calbee $5 & Asahi 500ml!)
     var PRODUCTS_DATASET = [
       {
+        id: 'PROD_CALBEE_100G',
+        icon: '🥔',
+        category: 'SNACK',
+        brandName: '卡樂B Calbee',
+        title: '熱浪/燒烤味薯片 (大袋裝)',
+        spec: '100g 袋裝',
+        unitWeightKg: 0.10,
+        bundleQty: 1,
+        bundleUnit: '包',
+        marketNormUnit: 13.50,
+        normCostPer100: 5.00,
+        normUnitName: '100g',
+        shopperTip: '阿偉現場實測最新情報！水泉澳惠康做緊 $5/包（100g 大包），平過晒 360、759 同藥房，見到必掃！',
+        quotes: [
+          { storeId: 'ST_SCO_WELLCOME', area: 'SHUI_CHUEN_O', chain: 'WELLCOME', storeLabel: '水泉澳 惠康', unitPrice: 5.00, bundleTotal: 5.00, note: '🔥 阿偉實測震撼價 $5/100g' },
+          { storeId: 'ST_SCO_759', area: 'SHUI_CHUEN_O', chain: '759STORE', storeLabel: '水泉澳 759阿信屋', unitPrice: 10.50, bundleTotal: 10.50, note: '常規會員價' },
+          { storeId: 'ST_SCO_360', area: 'SHUI_CHUEN_O', chain: 'BESTMART360', storeLabel: '水泉澳 優品360', unitPrice: 11.00, bundleTotal: 11.00, note: '常規特賣價' },
+          { storeId: 'ST_SCO_711', area: 'SHUI_CHUEN_O', chain: '7ELEVEN', storeLabel: '水泉澳 7-Eleven', unitPrice: 16.50, bundleTotal: 16.50, note: '便利店正價偏貴' }
+        ],
+        verifiedCount: 29
+      },
+      {
+        id: 'PROD_ASAHI_500ML',
+        icon: '🍺',
+        category: 'DRINK',
+        brandName: 'Asahi 朝日',
+        title: 'Super Dry 辛口啤酒 (大罐裝)',
+        spec: '500ml 大罐裝',
+        unitWeightKg: 0.52,
+        bundleQty: 1,
+        bundleUnit: '罐',
+        marketNormUnit: 15.00,
+        normCostPer100: 1.90,
+        normUnitName: '100ml',
+        shopperTip: '阿偉現場回傳項目！買大罐 500ml 優品360 同沙角藥房水貨最抵（約 $9.5–$10.5），7-11 單買最貴。',
+        quotes: [
+          { storeId: 'ST_SK_PHARMACY', area: 'SHA_KOK', chain: 'LOCAL_MARKET', storeLabel: '沙角 金城藥房', unitPrice: 9.50, bundleTotal: 9.50, note: '街坊水貨單罐底價' },
+          { storeId: 'ST_SCO_360', area: 'SHUI_CHUEN_O', chain: 'BESTMART360', storeLabel: '水泉澳 優品360', unitPrice: 10.50, bundleTotal: 10.50, note: '山上買僅差$1・順手買首選' },
+          { storeId: 'ST_SCO_WELLCOME', area: 'SHUI_CHUEN_O', chain: 'WELLCOME', storeLabel: '水泉澳 惠康', unitPrice: 12.50, bundleTotal: 12.50, note: '阿偉現場巡查紀錄' },
+          { storeId: 'ST_SCO_711', area: 'SHUI_CHUEN_O', chain: '7ELEVEN', storeLabel: '水泉澳 7-Eleven', unitPrice: 17.50, bundleTotal: 17.50, note: '便利店凍櫃單罐價' }
+        ],
+        verifiedCount: 16
+      },
+      {
         id: 'PROD_PRINGLES_102',
-        gtin: '8886467127137',
+        icon: '🥔',
         category: 'SNACK',
         brandName: 'Pringles 品客',
-        title: '原味薯片',
-        spec: '102g 筒裝',
+        title: '原味/酸忌廉薯片',
+        spec: '102g 筒裝 (2筒計)',
         unitWeightKg: 0.22,
         bundleQty: 2,
         bundleUnit: '筒',
         marketNormUnit: 18.00,
-        breakwaterFloorUnit: 9.50,
         normCostPer100: 9.31,
         normUnitName: '100g',
-        ergonomicTag: '0.22kg 輕巧・放工經沙角順路拎上山零負擔',
-        pricingInsight: '水泉澳惠康將單筒標價拉高至 $29.0 做「買1送1」（實收 $14.5/筒），沙角街市藥房單筒實賣 $9.5，每兩筒實慳 $10.0。',
+        shopperTip: '惠康將單筒拉高到 $29 玩「買1送1」（實收 $14.5/筒）；同一商場行去隔離優品 360 賣 $11.5，沙角藥房更低至 $9.5！',
         quotes: [
-          { storeId: 'ST_SK_PHARMACY', storeLabel: '沙角金城藥房', zone: 'VALLEY_3', unitPrice: 9.50, bundleTotal: 19.00, note: '街坊水貨常態底價', isBest: true },
-          { storeId: 'ST_SCO_360', storeLabel: '水泉澳優品360', zone: 'SCO_HILL', unitPrice: 11.50, bundleTotal: 23.00, note: '2件價折實', isBest: false },
-          { storeId: 'ST_SCO_WELLCOME', storeLabel: '水泉澳惠康', zone: 'SCO_HILL', unitPrice: 14.50, bundleTotal: 29.00, note: '標$29買1送1 (假特價)', isBest: false, isHighAnchor: true }
+          { storeId: 'ST_SK_PHARMACY', area: 'SHA_KOK', chain: 'LOCAL_MARKET', storeLabel: '沙角 金城藥房', unitPrice: 9.50, bundleTotal: 19.00, note: '全區最低水貨價' },
+          { storeId: 'ST_SCO_360', area: 'SHUI_CHUEN_O', chain: 'BESTMART360', storeLabel: '水泉澳 優品360', unitPrice: 11.50, bundleTotal: 23.00, note: '山上商場最抵揀' },
+          { storeId: 'ST_SCO_759', area: 'SHUI_CHUEN_O', chain: '759STORE', storeLabel: '水泉澳 759阿信屋', unitPrice: 12.00, bundleTotal: 24.00, note: '常規會員價' },
+          { storeId: 'ST_SCO_WELLCOME', area: 'SHUI_CHUEN_O', chain: 'WELLCOME', storeLabel: '水泉澳 惠康', unitPrice: 14.50, bundleTotal: 29.00, note: '標$29買1送1 (假特價貴$5/筒)' }
         ],
         verifiedCount: 18
       },
       {
+        id: 'PROD_SAMYANG_5PK',
+        icon: '🍜',
+        category: 'STAPLE',
+        brandName: '三養 Samyang',
+        title: '辣雞味芝士撈麵 (5包裝)',
+        spec: '140g × 5包袋裝',
+        unitWeightKg: 0.70,
+        bundleQty: 1,
+        bundleUnit: '袋',
+        marketNormUnit: 43.90,
+        normCostPer100: 4.57,
+        normUnitName: '100g',
+        shopperTip: '水泉澳惠康加價至 $43.9；但喺同一個水泉澳商場，行十步去 759 阿信屋只賣 $32.0，優品360 賣 $33.5，呢樣絕對值得過隔離買！',
+        quotes: [
+          { storeId: 'ST_SCO_759', area: 'SHUI_CHUEN_O', chain: '759STORE', storeLabel: '水泉澳 759阿信屋', unitPrice: 32.00, bundleTotal: 32.00, note: '同商場行過隔離即慳 $11.9' },
+          { storeId: 'ST_SCO_360', area: 'SHUI_CHUEN_O', chain: 'BESTMART360', storeLabel: '水泉澳 優品360', unitPrice: 33.50, bundleTotal: 33.50, note: '同商場次選・平惠康 $10.4' },
+          { storeId: 'ST_SK_PHARMACY', area: 'SHA_KOK', chain: 'LOCAL_MARKET', storeLabel: '沙角 金城藥房', unitPrice: 32.00, bundleTotal: 32.00, note: '街市藥房常態價' },
+          { storeId: 'ST_SCO_WELLCOME', area: 'SHUI_CHUEN_O', chain: 'WELLCOME', storeLabel: '水泉澳 惠康', unitPrice: 43.90, bundleTotal: 43.90, note: '全場最貴・切勿喺惠康買' }
+        ],
+        verifiedCount: 24
+      },
+      {
         id: 'PROD_RICE_5KG',
-        gtin: '4899668101053',
+        icon: '🍚',
         category: 'STAPLE',
         brandName: '金象牌',
-        title: '頂上茉莉香米',
+        title: '頂上茉莉香米 (5公斤)',
         spec: '5kg 袋裝',
         unitWeightKg: 5.00,
         bundleQty: 1,
         bundleUnit: '包',
         marketNormUnit: 72.90,
-        breakwaterFloorUnit: 59.90,
         normCostPer100: 1.26,
         normUnitName: '100g',
-        ergonomicTag: '5.0kg 重物・宜於水泉澳商場買完直達搭𨋢',
-        pricingInsight: '水泉澳惠康由 $72.9 直減 $10 至 $62.9。雖山下糧油店偶有 $60 散賣，但手抽 5kg 爬坡體力消耗極大，山上就近自提最符人體工學。',
+        shopperTip: '水泉澳惠康減 $10 做緊 $62.9，平過沙角街市糧油店（$64），而且 5kg 重物喺水泉澳商場買完直接搭𨋢返屋企最輕鬆！',
         quotes: [
-          { storeId: 'ST_SCO_WELLCOME', storeLabel: '水泉澳惠康', zone: 'SCO_HILL', unitPrice: 62.90, bundleTotal: 62.90, note: '山上直減$10・免爬坡首選', isBest: true },
-          { storeId: 'ST_PK_WELLCOME', storeLabel: '博康惠康', zone: 'VALLEY_3', unitPrice: 62.90, bundleTotal: 62.90, note: '同價但需搬運上山', isBest: false },
-          { storeId: 'ST_SK_GROCERY', storeLabel: '沙角糧油雜貨', zone: 'VALLEY_3', unitPrice: 64.00, bundleTotal: 64.00, note: '街市常規價', isBest: false }
+          { storeId: 'ST_SCO_WELLCOME', area: 'SHUI_CHUEN_O', chain: 'WELLCOME', storeLabel: '水泉澳 惠康', unitPrice: 62.90, bundleTotal: 62.90, note: '直減$10・山上買完搭𨋢首選' },
+          { storeId: 'ST_PK_WELLCOME', area: 'POK_HONG', chain: 'WELLCOME', storeLabel: '博康 惠康', unitPrice: 62.90, bundleTotal: 62.90, note: '同價但需搬運' },
+          { storeId: 'ST_SK_GROCERY', area: 'SHA_KOK', chain: 'LOCAL_MARKET', storeLabel: '沙角 街市糧油店', unitPrice: 64.00, bundleTotal: 64.00, note: '街市常規價' }
         ],
         verifiedCount: 31
       },
       {
-        id: 'PROD_SAMYANG_5PK',
-        gtin: '8801073141735',
-        category: 'STAPLE',
-        brandName: '三養 Samyang',
-        title: '辣雞味芝士撈麵',
-        spec: '140g × 5包裝',
-        unitWeightKg: 0.70,
-        bundleQty: 1,
-        bundleUnit: '袋',
-        marketNormUnit: 43.90,
-        breakwaterFloorUnit: 32.00,
-        normCostPer100: 4.57,
-        normUnitName: '100g',
-        ergonomicTag: '0.7kg 輕便・同商場行過隔離舖即慳 $11.9',
-        pricingInsight: '水泉澳惠康逆市加價至 $43.9（30天最高位）；但同一商場行幾步去 G14 舖 759 阿信屋或優品 360 僅售 $32.0–$33.5。',
-        quotes: [
-          { storeId: 'ST_SCO_759', storeLabel: '水泉澳 759阿信屋', zone: 'SCO_HILL', unitPrice: 32.00, bundleTotal: 32.00, note: '公價折實底線', isBest: true },
-          { storeId: 'ST_SCO_360', storeLabel: '水泉澳優品360', zone: 'SCO_HILL', unitPrice: 33.50, bundleTotal: 33.50, note: '常態特賣價', isBest: false },
-          { storeId: 'ST_SCO_WELLCOME', storeLabel: '水泉澳惠康', zone: 'SCO_HILL', unitPrice: 43.90, bundleTotal: 43.90, note: '30天最高峰・切勿買貴', isBest: false, isHighAnchor: true }
-        ],
-        verifiedCount: 24
-      },
-      {
-        id: 'PROD_COKE_8PK',
-        gtin: '4890008100941',
-        category: 'DRINK',
-        brandName: 'Coca-Cola 可口可樂',
-        title: '罐裝汽水 (可混搭零系/雪碧)',
-        spec: '330ml × 8罐裝 (買2排計)',
-        unitWeightKg: 5.28,
-        bundleQty: 2,
-        bundleUnit: '排(共16罐)',
-        marketNormUnit: 40.00,
-        breakwaterFloorUnit: 24.00,
-        normCostPer100: 1.02,
-        normUnitName: '100ml',
-        ergonomicTag: '5.3kg 重物・山上買完推車搭𨋢免手抽',
-        pricingInsight: '沙角金城藥房散罐雖平（$3.0/罐，折合8罐 $24），但 16 罐重達 5.3kg；山上水泉澳惠康買2排 $54（$27/排），每罐僅差 $0.38 卻免除搬運上山。',
-        quotes: [
-          { storeId: 'ST_SCO_WELLCOME', storeLabel: '水泉澳惠康', zone: 'SCO_HILL', unitPrice: 27.00, bundleTotal: 54.00, note: '買2排折實・山上免搬首選', isBest: true },
-          { storeId: 'ST_SK_PHARMACY', storeLabel: '沙角金城藥房', zone: 'VALLEY_3', unitPrice: 24.00, bundleTotal: 48.00, note: '$3/罐極平但重達5.3kg', isBest: false },
-          { storeId: 'ST_SCO_759', storeLabel: '水泉澳 759阿信屋', zone: 'SCO_HILL', unitPrice: 29.50, bundleTotal: 59.00, note: '常規會員價', isBest: false }
-        ],
-        verifiedCount: 27
-      },
-      {
         id: 'PROD_1664_4PK',
-        gtin: '3080216045306',
+        icon: '🍺',
         category: 'DRINK',
         brandName: '1664 Blanc',
-        title: '法國白啤酒',
+        title: '法國白啤酒 (4罐裝)',
         spec: '500ml × 4罐裝 (2排計)',
         unitWeightKg: 4.00,
         bundleQty: 2,
-        bundleUnit: '排(共8罐)',
+        bundleUnit: '排(8罐)',
         marketNormUnit: 61.90,
-        breakwaterFloorUnit: 40.00,
         normCostPer100: 2.10,
         normUnitName: '100ml',
-        ergonomicTag: '4.0kg 偏重・建議拉買餸車或順路車載',
-        pricingInsight: '水泉澳惠康現售正價 $72.0/排；水泉澳優品 360 及山下藥房平行進口價僅 $42.0/排，買兩排即相差 $60.0！',
+        shopperTip: '水泉澳惠康賣緊正價 $72/排；行過隔離水泉澳優品 360 只賣 $42/排，一排已經平 $30，買兩排足足慳 $60！',
         quotes: [
-          { storeId: 'ST_SCO_360', storeLabel: '水泉澳優品360', zone: 'SCO_HILL', unitPrice: 42.00, bundleTotal: 84.00, note: '2排特價・山上直取最抵', isBest: true },
-          { storeId: 'ST_SK_PHARMACY', storeLabel: '沙角街市藥房', zone: 'VALLEY_3', unitPrice: 41.00, bundleTotal: 82.00, note: '水貨底價但需搬上山', isBest: false },
-          { storeId: 'ST_SCO_WELLCOME', storeLabel: '水泉澳惠康', zone: 'SCO_HILL', unitPrice: 72.00, bundleTotal: 144.00, note: '正價無折・切勿單買', isBest: false, isHighAnchor: true }
+          { storeId: 'ST_SK_PHARMACY', area: 'SHA_KOK', chain: 'LOCAL_MARKET', storeLabel: '沙角 金城藥房', unitPrice: 41.00, bundleTotal: 82.00, note: '山下水貨底價' },
+          { storeId: 'ST_SCO_360', area: 'SHUI_CHUEN_O', chain: 'BESTMART360', storeLabel: '水泉澳 優品360', unitPrice: 42.00, bundleTotal: 84.00, note: '山上只差$1・免搬上山首選' },
+          { storeId: 'ST_SCO_759', area: 'SHUI_CHUEN_O', chain: '759STORE', storeLabel: '水泉澳 759阿信屋', unitPrice: 45.00, bundleTotal: 90.00, note: '常規價' },
+          { storeId: 'ST_SCO_WELLCOME', area: 'SHUI_CHUEN_O', chain: 'WELLCOME', storeLabel: '水泉澳 惠康', unitPrice: 72.00, bundleTotal: 144.00, note: '正價極貴・行去隔離360買' }
         ],
         verifiedCount: 21
       },
       {
+        id: 'PROD_COKE_8PK',
+        icon: '🥤',
+        category: 'DRINK',
+        brandName: '可口可樂 Coca-Cola',
+        title: '罐裝可樂/零系 (8罐裝)',
+        spec: '330ml × 8罐 (2排計)',
+        unitWeightKg: 5.28,
+        bundleQty: 2,
+        bundleUnit: '排(16罐)',
+        marketNormUnit: 40.00,
+        normCostPer100: 1.02,
+        normUnitName: '100ml',
+        shopperTip: '阿偉實測沙角金城藥房散罐 $3.0（8罐 $24）；水泉澳惠康買2排 $54（$27/排，只差 $3），因為汽水好重，喺山上惠康直接買最省力！',
+        quotes: [
+          { storeId: 'ST_SK_PHARMACY', area: 'SHA_KOK', chain: 'LOCAL_MARKET', storeLabel: '沙角 金城藥房', unitPrice: 24.00, bundleTotal: 48.00, note: '阿偉實測 $3/罐 (8罐$24)' },
+          { storeId: 'ST_SCO_WELLCOME', area: 'SHUI_CHUEN_O', chain: 'WELLCOME', storeLabel: '水泉澳 惠康', unitPrice: 27.00, bundleTotal: 54.00, note: '買2排$54・只差$3免搬上山' },
+          { storeId: 'ST_SCO_759', area: 'SHUI_CHUEN_O', chain: '759STORE', storeLabel: '水泉澳 759阿信屋', unitPrice: 29.50, bundleTotal: 59.00, note: '常規會員價' },
+          { storeId: 'ST_SCO_711', area: 'SHUI_CHUEN_O', chain: '7ELEVEN', storeLabel: '水泉澳 7-Eleven', unitPrice: 44.00, bundleTotal: 88.00, note: '便利店單件計偏高' }
+        ],
+        verifiedCount: 27
+      },
+      {
         id: 'PROD_NISSIN_91G',
-        gtin: '4897878000012',
+        icon: '🍜',
         category: 'STAPLE',
         brandName: '日清 Nissin',
-        title: '出前一丁麻油麵 (任選口味)',
+        title: '出前一丁麻油麵 (任揀口味)',
         spec: '91g × 9包組合',
         unitWeightKg: 0.82,
         bundleQty: 9,
         bundleUnit: '包',
         marketNormUnit: 5.00,
-        breakwaterFloorUnit: 3.30,
         normCostPer100: 3.91,
         normUnitName: '100g',
-        ergonomicTag: '0.82kg 輕巧・儲糧剛需',
-        pricingInsight: '沙角/乙明藥房 5 包裝水貨底價約 $16.5（$3.3/包）；水泉澳惠康任選 9 包單包裝 $32.0（$3.56/包），勝在可自由混搭不同口味。',
+        shopperTip: '乙明/沙角藥房 5包裝折合 $3.3/包；水泉澳惠康買9單包 $32（$3.56/包），每包只差兩毫半，喺惠康行開街順手買埋最方便！',
         quotes: [
-          { storeId: 'ST_JM_PHARMACY', storeLabel: '乙明/沙角藥房', zone: 'VALLEY_3', unitPrice: 3.30, bundleTotal: 29.70, note: '5包裝折合$3.3/包・最平', isBest: true },
-          { storeId: 'ST_SCO_WELLCOME', storeLabel: '水泉澳惠康', zone: 'SCO_HILL', unitPrice: 3.56, bundleTotal: 32.00, note: '買9件$32・任揀口味', isBest: false },
-          { storeId: 'ST_SCO_759', storeLabel: '水泉澳 759阿信屋', zone: 'SCO_HILL', unitPrice: 3.90, bundleTotal: 35.10, note: '5包裝常規價', isBest: false }
+          { storeId: 'ST_JM_PHARMACY', area: 'JAT_MIN', chain: 'LOCAL_MARKET', storeLabel: '乙明/沙角 藥房', unitPrice: 3.30, bundleTotal: 29.70, note: '5包裝折合 $3.3/包' },
+          { storeId: 'ST_SCO_WELLCOME', area: 'SHUI_CHUEN_O', chain: 'WELLCOME', storeLabel: '水泉澳 惠康', unitPrice: 3.56, bundleTotal: 32.00, note: '買9包$32・只差$0.26順手買' },
+          { storeId: 'ST_SCO_360', area: 'SHUI_CHUEN_O', chain: 'BESTMART360', storeLabel: '水泉澳 優品360', unitPrice: 3.70, bundleTotal: 33.30, note: '5包裝常規價' },
+          { storeId: 'ST_SCO_759', area: 'SHUI_CHUEN_O', chain: '759STORE', storeLabel: '水泉澳 759阿信屋', unitPrice: 3.90, bundleTotal: 35.10, note: '5包裝常規價' }
         ],
         verifiedCount: 19
       },
       {
         id: 'PROD_BW_MILK_1L',
-        gtin: '4894488012213',
+        icon: '🥛',
         category: 'DRINK',
-        brandName: '黑白淡奶 / 純牛奶',
-        title: '荷蘭全脂純牛奶',
-        spec: '1公升盒裝 (2盒計)',
+        brandName: '黑白純牛奶',
+        title: '荷蘭全脂純牛奶 (1公升)',
+        spec: '1L 盒裝 (2盒計)',
         unitWeightKg: 2.00,
         bundleQty: 2,
         bundleUnit: '盒',
         marketNormUnit: 23.00,
-        breakwaterFloorUnit: 15.50,
         normCostPer100: 1.55,
         normUnitName: '100ml',
-        ergonomicTag: '2.0kg 適中・沙角街市順路帶回',
-        pricingInsight: '水泉澳惠康已取消 $16.5 特價並復原至 $23.0 正價；沙角街市糧油店與藥房烘焙批發價長期維持 $15.5–$16.0/盒。',
+        shopperTip: '水泉澳惠康已還原正價 $23/盒；同商場優品 360 賣 $17.5/盒，沙角街市糧油店更只需 $15.5/盒，兩盒差 $15！',
         quotes: [
-          { storeId: 'ST_SK_GROCERY', storeLabel: '沙角街市糧油店', zone: 'VALLEY_3', unitPrice: 15.50, bundleTotal: 31.00, note: '街市茶記批發底價', isBest: true },
-          { storeId: 'ST_SCO_360', storeLabel: '水泉澳優品360', zone: 'SCO_HILL', unitPrice: 17.50, bundleTotal: 35.00, note: '山上商場次選', isBest: false },
-          { storeId: 'ST_SCO_WELLCOME', storeLabel: '水泉澳惠康', zone: 'SCO_HILL', unitPrice: 23.00, bundleTotal: 46.00, note: '已復原正價・貴$7.5/盒', isBest: false, isHighAnchor: true }
+          { storeId: 'ST_SK_GROCERY', area: 'SHA_KOK', chain: 'LOCAL_MARKET', storeLabel: '沙角 街市糧油店', unitPrice: 15.50, bundleTotal: 31.00, note: '街市茶記批發底價' },
+          { storeId: 'ST_SCO_360', area: 'SHUI_CHUEN_O', chain: 'BESTMART360', storeLabel: '水泉澳 優品360', unitPrice: 17.50, bundleTotal: 35.00, note: '山上商場最抵・平惠康$5.5/盒' },
+          { storeId: 'ST_SCO_WELLCOME', area: 'SHUI_CHUEN_O', chain: 'WELLCOME', storeLabel: '水泉澳 惠康', unitPrice: 23.00, bundleTotal: 46.00, note: '已還原正價・貴$7.5/盒' }
         ],
         verifiedCount: 15
       },
       {
         id: 'PROD_VITASOY_1L',
-        gtin: '4891028164678',
+        icon: '🧃',
         category: 'DRINK',
         brandName: '維他奶 Vitasoy',
-        title: '原味/麥精豆奶家庭裝',
-        spec: '1公升盒裝 (2盒計)',
+        title: '原味/麥精豆奶家庭裝 (1公升)',
+        spec: '1L 盒裝 (2盒計)',
         unitWeightKg: 2.00,
         bundleQty: 2,
         bundleUnit: '盒',
         marketNormUnit: 13.50,
-        breakwaterFloorUnit: 10.00,
         normCostPer100: 1.05,
         normUnitName: '100ml',
-        ergonomicTag: '2.0kg 適中・運動後蛋白質補充',
-        pricingInsight: '沙角藥房單盒 $10.0；山上水泉澳惠康買2盒 $22.0（$11.0/盒），相差僅 $1/盒，山上直買免爬坡更省力。',
+        shopperTip: '沙角藥房賣 $10/盒，水泉澳惠康買2盒 $22（$11/盒），每盒僅差 $1，喺惠康買餸順手執埋就得，唔使特登落山！',
         quotes: [
-          { storeId: 'ST_SK_PHARMACY', storeLabel: '沙角金城藥房', zone: 'VALLEY_3', unitPrice: 10.00, bundleTotal: 20.00, note: '山下底價 $10/盒', isBest: true },
-          { storeId: 'ST_SCO_WELLCOME', storeLabel: '水泉澳惠康', zone: 'SCO_HILL', unitPrice: 11.00, bundleTotal: 22.00, note: '買2盒$22・山上免搬', isBest: false },
-          { storeId: 'ST_PK_WELLCOME', storeLabel: '博康惠康', zone: 'VALLEY_3', unitPrice: 11.00, bundleTotal: 22.00, note: '買2盒$22', isBest: false }
+          { storeId: 'ST_SK_PHARMACY', area: 'SHA_KOK', chain: 'LOCAL_MARKET', storeLabel: '沙角 金城藥房', unitPrice: 10.00, bundleTotal: 20.00, note: '山下藥房底價' },
+          { storeId: 'ST_SCO_WELLCOME', area: 'SHUI_CHUEN_O', chain: 'WELLCOME', storeLabel: '水泉澳 惠康', unitPrice: 11.00, bundleTotal: 22.00, note: '買2盒$22・只差$1順手買埋' },
+          { storeId: 'ST_PK_WELLCOME', area: 'POK_HONG', chain: 'WELLCOME', storeLabel: '博康 惠康', unitPrice: 11.00, bundleTotal: 22.00, note: '買2盒$22' },
+          { storeId: 'ST_SCO_711', area: 'SHUI_CHUEN_O', chain: '7ELEVEN', storeLabel: '水泉澳 7-Eleven', unitPrice: 15.50, bundleTotal: 31.00, note: '便利店單盒價' }
         ],
         verifiedCount: 12
       }
     ];
 
-    // 3. Ergonomic Route Presets (Dynamically computed from product IDs)
-    var ROUTE_PRESETS = [
-      {
-        id: 'ROUTE_HILL_HEAVY',
-        title: '水泉澳山上・重物免爬坡組合',
-        subtitle: '金象米5kg + 可樂2排 + 火雞麵(759)',
-        badge: '免搬上山',
-        productIds: ['PROD_RICE_5KG', 'PROD_COKE_8PK', 'PROD_SAMYANG_5PK']
-      },
-      {
-        id: 'ROUTE_VALLEY_LIGHT',
-        title: '沙角/乙明山下・順路輕巧尋底組合',
-        subtitle: '品客薯片2筒 + 出前一丁 + 黑白牛奶',
-        badge: '平地尋底',
-        productIds: ['PROD_PRINGLES_102', 'PROD_NISSIN_91G', 'PROD_BW_MILK_1L']
-      }
-    ];
-
     // ============================================================================
-    // APPLICATION STATE & STORAGE ENGINE
+    // STATE MANAGEMENT
     // ============================================================================
-    var currentZone = 'ALL';
+    var currentArea = 'ALL';
+    var currentChain = 'ALL';
     var currentCategory = 'ALL';
-    var sortMode = 'SAVINGS'; // 'SAVINGS' | 'WEIGHT' | 'UNIT_COST'
+    var searchQuery = '';
+    var sortMode = 'SAVINGS'; // 'SAVINGS' | 'STORE_PRICE' | 'UNIT_COST'
     var basketState = {};
     var votedState = {};
 
@@ -464,17 +506,11 @@
     });
 
     function safeGetStorage(key, fallback) {
-      try {
-        return localStorage.getItem(key) || fallback;
-      } catch (e) {
-        return fallback;
-      }
+      try { return localStorage.getItem(key) || fallback; } catch (e) { return fallback; }
     }
 
     function safeSetStorage(key, val) {
-      try {
-        localStorage.setItem(key, val);
-      } catch (e) {}
+      try { localStorage.setItem(key, val); } catch (e) {}
     }
 
     function showToast(msg) {
@@ -483,41 +519,437 @@
       if (!t || !txt) return;
       txt.textContent = msg;
       t.classList.remove('hidden');
-      setTimeout(function() {
-        t.classList.add('hidden');
-      }, 2400);
+      setTimeout(function() { t.classList.add('hidden'); }, 2500);
     }
 
-    // Helper: Get best quote for a product (optionally filtered by zone)
-    function getBestQuote(product, zoneFilter) {
-      var candidates = product.quotes.filter(function(q) {
-        return !zoneFilter || zoneFilter === 'ALL' || q.zone === zoneFilter;
-      });
-      if (candidates.length === 0) candidates = product.quotes;
-      var best = candidates[0];
-      candidates.forEach(function(c) {
-        if (c.unitPrice < best.unitPrice) best = c;
+    // Get the overall cheapest quote across all stores
+    function getOverallBestQuote(product) {
+      var best = product.quotes[0];
+      product.quotes.forEach(function(q) {
+        if (q.unitPrice < best.unitPrice) best = q;
       });
       return best;
     }
 
-    function getHighestQuote(product) {
-      var high = product.quotes[0];
-      product.quotes.forEach(function(c) {
-        if (c.unitPrice > high.unitPrice) high = c;
+    // Get quotes matching the user's selected Area and/or Store Chain
+    function getMatchingQuotes(product, areaId, chainId) {
+      return product.quotes.filter(function(q) {
+        var areaMatch = (areaId === 'ALL') || (q.area === areaId);
+        var chainMatch = (chainId === 'ALL') || (q.chain === chainId);
+        return areaMatch && chainMatch;
       });
-      return high;
     }
 
-    function getProductBundleSavings(product) {
-      var best = getBestQuote(product, 'ALL');
+    // Get the representative quote for the user's current view (either selected store/area or overall best)
+    function getActiveQuoteForView(product) {
+      var matches = getMatchingQuotes(product, currentArea, currentChain);
+      if (matches.length === 0) return getOverallBestQuote(product);
+      var bestMatch = matches[0];
+      matches.forEach(function(q) {
+        if (q.unitPrice < bestMatch.unitPrice) bestMatch = q;
+      });
+      return bestMatch;
+    }
+
+    function getProductMaxSavings(product) {
+      var best = getOverallBestQuote(product);
       var normTotal = product.marketNormUnit * product.bundleQty;
       var diff = normTotal - best.bundleTotal;
       return diff > 0 ? diff : 0;
     }
 
+    function getChainStyle(chainId) {
+      var found = CHAINS_TABLE.find(function(c) { return c.id === chainId; });
+      return found ? found.badgeCls : 'bg-slate-100 text-slate-700 border-slate-200';
+    }
+
     // ============================================================================
-    // USER FOOTPRINT ENGINE (Simulates & Persists Next-Day Personalized Feedback)
+    // NAVIGATION & FILTER HANDLERS
+    // ============================================================================
+    function selectArea(areaId) {
+      currentArea = areaId;
+      renderNavigationBars();
+      updateShopperModeBanner();
+      renderCards();
+      updateBasketSummary();
+    }
+
+    function selectChain(chainId) {
+      currentChain = chainId;
+      renderNavigationBars();
+      updateShopperModeBanner();
+      renderCards();
+      updateBasketSummary();
+    }
+
+    function selectCategory(catId) {
+      currentCategory = catId;
+      renderNavigationBars();
+      renderCards();
+    }
+
+    function onSearchInput(val) {
+      searchQuery = (val || '').trim().toLowerCase();
+      renderCards();
+    }
+
+    function resetFilters() {
+      currentArea = 'ALL';
+      currentChain = 'ALL';
+      currentCategory = 'ALL';
+      searchQuery = '';
+      var sInput = document.getElementById('search-input');
+      if (sInput) sInput.value = '';
+      renderNavigationBars();
+      updateShopperModeBanner();
+      renderCards();
+      updateBasketSummary();
+    }
+
+    function cycleSortMode() {
+      var modes = ['SAVINGS', 'STORE_PRICE', 'UNIT_COST'];
+      var labels = {
+        'SAVINGS': '按最抵買',
+        'STORE_PRICE': '平價優先',
+        'UNIT_COST': '單位成本'
+      };
+      var nextIdx = (modes.indexOf(sortMode) + 1) % modes.length;
+      sortMode = modes[nextIdx];
+      var lbl = document.getElementById('sort-label');
+      if (lbl) lbl.textContent = labels[sortMode];
+      renderCards();
+      showToast('已切換排序：' + labels[sortMode]);
+    }
+
+    function renderNavigationBars() {
+      // 1. Area Bar
+      var aBar = document.getElementById('area-bar');
+      if (aBar) {
+        aBar.innerHTML = '';
+        AREAS_TABLE.forEach(function(a) {
+          var active = a.id === currentArea;
+          var btn = document.createElement('button');
+          btn.onclick = function() { selectArea(a.id); };
+          btn.className = active
+            ? 'px-2.5 py-1 rounded-lg text-xs font-extrabold bg-slate-900 text-white whitespace-nowrap transition'
+            : 'px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200/70 whitespace-nowrap transition';
+          btn.textContent = a.label;
+          aBar.appendChild(btn);
+        });
+      }
+
+      // 2. Store Chain Bar
+      var chBar = document.getElementById('chain-bar');
+      if (chBar) {
+        chBar.innerHTML = '';
+        CHAINS_TABLE.forEach(function(ch) {
+          var active = ch.id === currentChain;
+          var btn = document.createElement('button');
+          btn.onclick = function() { selectChain(ch.id); };
+          btn.className = active
+            ? 'px-2.5 py-1 rounded-lg text-xs font-extrabold bg-emerald-600 text-white whitespace-nowrap transition shadow-2xs'
+            : 'px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200/70 whitespace-nowrap transition';
+          btn.textContent = ch.label;
+          chBar.appendChild(btn);
+        });
+      }
+
+      // 3. Category Bar
+      var catBar = document.getElementById('category-bar');
+      if (catBar) {
+        catBar.innerHTML = '';
+        var selectedCount = PRODUCTS_DATASET.filter(function(p) { return basketState[p.id]; }).length;
+        CATEGORIES_TABLE.forEach(function(c) {
+          var active = c.id === currentCategory;
+          var btn = document.createElement('button');
+          btn.onclick = function() { selectCategory(c.id); };
+          btn.className = active
+            ? 'px-2.5 py-1 rounded-lg text-xs font-extrabold bg-slate-800 text-white whitespace-nowrap transition'
+            : 'px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 whitespace-nowrap transition';
+          var txt = c.label;
+          if (c.id === 'BASKET' && selectedCount > 0) {
+            txt = '🛒 已揀 (' + selectedCount + ')';
+          }
+          btn.textContent = txt;
+          catBar.appendChild(btn);
+        });
+      }
+
+      // 4. Quick Store Chips in Report Modal
+      var chipsContainer = document.getElementById('quick-store-chips');
+      if (chipsContainer) {
+        chipsContainer.innerHTML = '';
+        STORES_DIRECTORY.slice(0, 6).forEach(function(st) {
+          var chip = document.createElement('button');
+          chip.onclick = function() { setQuickReportStore(st.shortName); };
+          chip.className = 'px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs text-slate-800 font-semibold text-left truncate transition';
+          chip.textContent = '📍 ' + st.shortName;
+          chipsContainer.appendChild(chip);
+        });
+      }
+    }
+
+    function updateShopperModeBanner() {
+      var titleEl = document.getElementById('shopper-mode-title');
+      var subEl = document.getElementById('shopper-mode-subtitle');
+      var resetBtn = document.getElementById('reset-filter-btn');
+      var boxEl = document.getElementById('shopper-mode-box');
+      if (!titleEl || !subEl || !resetBtn || !boxEl) return;
+
+      var areaObj = AREAS_TABLE.find(function(a) { return a.id === currentArea; });
+      var chainObj = CHAINS_TABLE.find(function(c) { return c.id === currentChain; });
+
+      if (currentArea === 'ALL' && currentChain === 'ALL') {
+        resetBtn.classList.add('hidden');
+        boxEl.className = 'bg-emerald-50/90 border border-emerald-200/90 rounded-2xl px-3.5 py-2.5 flex items-center justify-between gap-2';
+        titleEl.textContent = '全區格價視角（點上面「水泉澳」或「惠康 / 360 / 759」即變單店指南）';
+        subEl.textContent = '不用為慳一蚊走三間舖！揀你身處嘅商舖，即睇邊樣「順手買埋」、邊樣「過隔離舖買」。';
+      } else {
+        resetBtn.classList.remove('hidden');
+        boxEl.className = 'bg-slate-900 text-white rounded-2xl px-3.5 py-2.5 flex items-center justify-between gap-2 shadow-xs';
+        var areaText = currentArea === 'ALL' ? '沙田四邨' : areaObj.label;
+        var chainText = currentChain === 'ALL' ? '所有商舖' : chainObj.label;
+        titleEl.className = 'text-xs font-extrabold text-white';
+        subEl.className = 'text-[11px] text-slate-300 mt-0.5';
+        titleEl.textContent = '📍 正在瀏覽：【' + areaText + ' · ' + chainText + '】專場';
+        subEl.textContent = '已列出呢間舖有賣嘅全部貨品，並標示「呢間最抵」、「順手買埋」或「建議過隔離買」！';
+      }
+    }
+
+    // ============================================================================
+    // PRODUCT CARDS RENDERER (Shopper-First Decision Cards)
+    // ============================================================================
+    function renderCards() {
+      var container = document.getElementById('cards-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      // Filter products: CRITICAL FIX — show product if ANY of its quotes match the selected Area & Chain!
+      var filtered = PRODUCTS_DATASET.filter(function(p) {
+        if (currentCategory === 'BASKET' && !basketState[p.id]) return false;
+        if (currentCategory !== 'ALL' && currentCategory !== 'BASKET' && p.category !== currentCategory) return false;
+        if (searchQuery) {
+          var hay = (p.brandName + ' ' + p.title + ' ' + p.spec + ' ' + p.shopperTip).toLowerCase();
+          if (hay.indexOf(searchQuery) === -1) return false;
+        }
+        var matchingQuotes = getMatchingQuotes(p, currentArea, currentChain);
+        return matchingQuotes.length > 0;
+      });
+
+      filtered.sort(function(a, b) {
+        if (sortMode === 'SAVINGS') {
+          return getProductMaxSavings(b) - getProductMaxSavings(a);
+        } else if (sortMode === 'STORE_PRICE') {
+          return getActiveQuoteForView(a).unitPrice - getActiveQuoteForView(b).unitPrice;
+        } else {
+          return a.normCostPer100 - b.normCostPer100;
+        }
+      });
+
+      if (filtered.length === 0) {
+        var empty = document.createElement('div');
+        empty.className = 'bg-white border border-slate-200 rounded-2xl p-8 text-center space-y-2';
+        empty.innerHTML =
+          '<div class="text-2xl">🔍</div>' +
+          '<div class="text-sm font-bold text-slate-700">呢個篩選條件下暫時未有貨品紀錄</div>' +
+          '<button onclick="resetFilters()" class="mt-1 px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold">返回全部貨品</button>';
+        container.appendChild(empty);
+        return;
+      }
+
+      var isSingleStoreMode = (currentArea !== 'ALL' || currentChain !== 'ALL');
+
+      filtered.forEach(function(p) {
+        var overallBest = getOverallBestQuote(p);
+        var activeQuote = getActiveQuoteForView(p);
+        var priceDiffUnit = activeQuote.unitPrice - overallBest.unitPrice;
+        var priceDiffBundle = activeQuote.bundleTotal - overallBest.bundleTotal;
+        var inBasket = basketState[p.id];
+
+        // Compute 3-Tier Human Shopper Verdict Badge when viewing a specific store or overall
+        var decisionBadgeHtml = '';
+        if (!isSingleStoreMode) {
+          var saveVsNorm = (p.marketNormUnit - overallBest.unitPrice) * p.bundleQty;
+          if (saveVsNorm > 0) {
+            decisionBadgeHtml = '<span class="inline-block text-[11px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-lg mt-0.5">最抵慳 $' + saveVsNorm.toFixed(1) + '</span>';
+          }
+        } else {
+          if (priceDiffUnit <= 0.05) {
+            decisionBadgeHtml = '<span class="inline-block text-[11px] font-extrabold bg-emerald-600 text-white px-2 py-0.5 rounded-lg mt-0.5">✅ 呢間最抵・即買</span>';
+          } else if (priceDiffBundle <= 3.0) {
+            decisionBadgeHtml = '<span class="inline-block text-[11px] font-bold bg-sky-50 text-sky-800 border border-sky-200 px-2 py-0.5 rounded-lg mt-0.5">👌 只差 $' + priceDiffUnit.toFixed(1) + '・順手買埋算</span>';
+          } else {
+            decisionBadgeHtml = '<span class="inline-block text-[11px] font-extrabold bg-rose-50 text-rose-700 border border-rose-200 px-2 py-0.5 rounded-lg mt-0.5">⚠️ 貴 $' + priceDiffBundle.toFixed(1) + '・去' + overallBest.storeLabel + '買</span>';
+          }
+        }
+
+        // Build clean, un-truncated Store Comparison List rows
+        var sortedQuotes = p.quotes.slice().sort(function(x, y) { return x.unitPrice - y.unitPrice; });
+        var quotesRowsHtml = sortedQuotes.map(function(q, idx) {
+          var isCheapest = (idx === 0);
+          var isFocusedStore = isSingleStoreMode && (
+            (currentArea === 'ALL' || q.area === currentArea) &&
+            (currentChain === 'ALL' || q.chain === currentChain)
+          );
+          var rowBg = isFocusedStore
+            ? 'bg-emerald-50/90 border-emerald-400 ring-1 ring-emerald-400/50'
+            : (isCheapest ? 'bg-emerald-50/40 border-emerald-200/90' : 'bg-slate-50/80 border-slate-200/70');
+
+          var chainBadgeCls = getChainStyle(q.chain);
+          var diffFromBest = q.unitPrice - overallBest.unitPrice;
+          var rightTag = '';
+          if (isCheapest) {
+            rightTag = '<span class="text-[10px] font-extrabold bg-emerald-600 text-white px-1.5 py-0.5 rounded">全場最平</span>';
+          } else if (diffFromBest <= 1.5) {
+            rightTag = '<span class="text-[10px] font-bold bg-sky-100 text-sky-800 px-1.5 py-0.5 rounded">差 $' + diffFromBest.toFixed(1) + ' 順手買</span>';
+          } else {
+            rightTag = '<span class="text-[10px] font-bold bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded">貴 $' + diffFromBest.toFixed(1) + '</span>';
+          }
+
+          return '<div class="border rounded-xl px-2.5 py-2 flex items-center justify-between gap-2 ' + rowBg + '">' +
+            '<div class="flex items-center gap-2 min-w-0">' +
+              '<span class="text-[11px] font-extrabold border px-2 py-0.5 rounded-md whitespace-nowrap shrink-0 ' + chainBadgeCls + '">' + q.storeLabel + '</span>' +
+              '<span class="text-[11px] text-slate-600 truncate">' + q.note + '</span>' +
+            '</div>' +
+            '<div class="flex items-center gap-1.5 shrink-0">' +
+              rightTag +
+              '<span class="text-sm font-black font-mono ' + (isCheapest ? 'text-emerald-700' : 'text-slate-800') + '">$' + q.unitPrice.toFixed(1) + '</span>' +
+            '</div>' +
+          '</div>';
+        }).join('');
+
+        var btnCls = inBasket
+          ? 'bg-slate-900 text-white border-slate-900'
+          : 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-600';
+        var btnText = inBasket ? '✓ 已喺採購清單 (點擊移除)' : '＋ 加入今日採購清單';
+
+        var card = document.createElement('article');
+        card.className = 'bg-white rounded-2xl border border-slate-200/90 p-3.5 shadow-2xs space-y-2.5 transition';
+        card.innerHTML =
+          '<!-- Card Header: Visual Food Icon + Product Name + Price in Current View -->' +
+          '<div class="flex items-start justify-between gap-2.5">' +
+            '<div class="flex items-start gap-2.5 min-w-0">' +
+              '<div class="w-11 h-11 rounded-2xl bg-slate-100 border border-slate-200/60 flex items-center justify-center text-2xl shrink-0">' +
+                p.icon +
+              '</div>' +
+              '<div class="min-w-0">' +
+                '<div class="flex items-center gap-1.5 flex-wrap">' +
+                  '<span class="text-xs font-extrabold text-slate-600">' + p.brandName + '</span>' +
+                  '<span class="text-slate-300">·</span>' +
+                  '<span class="text-[11px] font-semibold text-slate-500">' + p.spec + '</span>' +
+                '</div>' +
+                '<h3 class="text-base font-black text-slate-900 leading-snug mt-0.5">' + p.title + '</h3>' +
+                '<div class="text-[11px] text-slate-400 font-mono mt-0.5">折合 $' + p.normCostPer100.toFixed(2) + ' / ' + p.normUnitName + ' · 重量 ' + p.unitWeightKg.toFixed(2) + 'kg</div>' +
+              '</div>' +
+            '</div>' +
+
+            '<div class="text-right shrink-0">' +
+              '<div class="text-[10px] font-bold text-slate-500 whitespace-nowrap">' + (isSingleStoreMode ? activeQuote.storeLabel : '最抵: ' + overallBest.storeLabel) + '</div>' +
+              '<div class="text-xl font-black ' + (priceDiffUnit > 2.0 ? 'text-rose-600' : 'text-emerald-700') + ' font-mono leading-tight">$' + activeQuote.unitPrice.toFixed(1) + '</div>' +
+              decisionBadgeHtml +
+            '</div>' +
+          '</div>' +
+
+          '<!-- Clear Store-by-Store Price Comparison Rows (Zero Truncated Store Names) -->' +
+          '<div class="space-y-1.5 pt-0.5">' +
+            quotesRowsHtml +
+          '</div>' +
+
+          '<!-- Human-Friendly Shopper Tip -->' +
+          '<div class="bg-amber-50/70 border border-amber-200/70 rounded-xl px-3 py-2 text-xs text-slate-700 leading-relaxed">' +
+            '💡 <b class="text-slate-900">買餸貼士：</b>' + p.shopperTip +
+          '</div>' +
+
+          '<!-- Action Buttons -->' +
+          '<div class="pt-0.5 flex items-center gap-2">' +
+            '<button onclick="toggleBasketItem(\'' + p.id + '\')" class="touch-target flex-1 py-2 px-3 rounded-xl border text-xs font-extrabold whitespace-nowrap transition ' + btnCls + '">' + btnText + '</button>' +
+            '<button onclick="verifyStock(\'' + p.id + '\')" class="touch-target py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200/80 text-xs font-bold text-slate-700 whitespace-nowrap shrink-0 transition">👍 報準 (' + p.verifiedCount + ')</button>' +
+            '<button onclick="shareSingleProduct(\'' + p.id + '\')" class="touch-target py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200/80 text-xs font-bold text-slate-700 whitespace-nowrap shrink-0 transition">📤 分享</button>' +
+          '</div>';
+
+        container.appendChild(card);
+      });
+    }
+
+    // ============================================================================
+    // SHOPPING BASKET: ONE-STOP vs MULTI-STORE COMPARISON
+    // ============================================================================
+    function toggleBasketItem(productId) {
+      basketState[productId] = !basketState[productId];
+      if (basketState[productId]) {
+        recordUserFootprint(productId);
+      }
+      updateBasketSummary();
+      renderNavigationBars();
+      renderCards();
+    }
+
+    function updateBasketSummary() {
+      var bestTotalSpend = 0;
+      var activeStoreTotalSpend = 0;
+      var totalSave = 0;
+      var totalWeight = 0;
+      var count = 0;
+      var isSingleStoreMode = (currentArea !== 'ALL' || currentChain !== 'ALL');
+
+      PRODUCTS_DATASET.forEach(function(p) {
+        if (basketState[p.id]) {
+          var best = getOverallBestQuote(p);
+          var active = getActiveQuoteForView(p);
+          bestTotalSpend += best.bundleTotal;
+          activeStoreTotalSpend += active.bundleTotal;
+          totalSave += getProductMaxSavings(p);
+          totalWeight += p.unitWeightKg;
+          count += 1;
+        }
+      });
+
+      var modeLbl = document.getElementById('basket-mode-label');
+      var spendEl = document.getElementById('disp-total-spend');
+      var saveEl = document.getElementById('disp-total-save');
+
+      if (count === 0) {
+        if (modeLbl) modeLbl.textContent = '已揀清單實付';
+        if (spendEl) spendEl.textContent = '$0.0';
+        if (saveEl) saveEl.textContent = '點擊「＋ 加入今日採購清單」計數';
+      } else if (isSingleStoreMode) {
+        var extraCostInThisStore = activeStoreTotalSpend - bestTotalSpend;
+        if (modeLbl) modeLbl.textContent = '呢間一間買齊';
+        if (spendEl) spendEl.textContent = '$' + activeStoreTotalSpend.toFixed(1);
+        if (extraCostInThisStore <= 2.0) {
+          if (saveEl) saveEl.textContent = '✅ 呢間一間買齊最抵 (只差$' + extraCostInThisStore.toFixed(1) + ')';
+        } else {
+          if (saveEl) saveEl.textContent = '分店買最抵 $' + bestTotalSpend.toFixed(1) + ' (可再慳$' + extraCostInThisStore.toFixed(1) + ')';
+        }
+      } else {
+        if (modeLbl) modeLbl.textContent = '最抵買齊實付';
+        if (spendEl) spendEl.textContent = '$' + bestTotalSpend.toFixed(1);
+        if (saveEl) saveEl.textContent = '比常規正價慳 $' + totalSave.toFixed(1);
+      }
+
+      document.getElementById('disp-total-weight').textContent = totalWeight.toFixed(1) + ' kg';
+      document.getElementById('disp-selected-count').textContent = String(count);
+
+      var loadTag = document.getElementById('ergonomic-load-tag');
+      if (loadTag) {
+        if (totalWeight === 0) {
+          loadTag.textContent = '未揀貨品';
+          loadTag.className = 'text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-medium';
+        } else if (totalWeight < 3.0) {
+          loadTag.textContent = '🟢 單手輕鬆拎';
+          loadTag.className = 'text-[10px] bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded font-bold';
+        } else if (totalWeight < 5.0) {
+          loadTag.textContent = '🟡 建議雙手分擔';
+          loadTag.className = 'text-[10px] bg-amber-50 text-amber-800 px-1.5 py-0.5 rounded font-bold';
+        } else {
+          loadTag.textContent = '🔴 逾5kg 宜山上買或推車';
+          loadTag.className = 'text-[10px] bg-rose-50 text-rose-700 px-1.5 py-0.5 rounded font-bold';
+        }
+      }
+    }
+
+    // ============================================================================
+    // USER FOOTPRINT & STOCK VERIFICATION
     // ============================================================================
     function recordUserFootprint(productId) {
       var p = PRODUCTS_DATASET.find(function(x) { return x.id === productId; });
@@ -526,24 +958,20 @@
       var list = [];
       try { list = JSON.parse(raw); } catch (e) { list = []; }
       var existingIdx = list.findIndex(function(item) { return item.productId === productId; });
-      var best = getBestQuote(p, 'ALL');
-      var high = getHighestQuote(p);
+      var best = getOverallBestQuote(p);
       var entry = {
         productId: p.id,
-        title: p.brandName + ' ' + p.title,
+        title: p.icon + ' ' + p.brandName + ' ' + p.title,
         bestStore: best.storeLabel,
         bestPrice: best.unitPrice,
-        highStore: high.storeLabel,
-        highPrice: high.unitPrice,
-        saveAmount: getProductBundleSavings(p),
-        timestamp: new Date().toISOString()
+        saveAmount: getProductMaxSavings(p)
       };
       if (existingIdx !== -1) {
         list[existingIdx] = entry;
       } else {
         list.unshift(entry);
       }
-      if (list.length > 4) list = list.slice(0, 4);
+      if (list.length > 3) list = list.slice(0, 3);
       safeSetStorage('002_user_footprints_v3', JSON.stringify(list));
       renderFootprints();
     }
@@ -551,7 +979,7 @@
     function clearFootprints() {
       safeSetStorage('002_user_footprints_v3', '[]');
       renderFootprints();
-      showToast('已清除個人足跡記憶');
+      showToast('已清除瀏覽足跡');
     }
 
     function renderFootprints() {
@@ -569,159 +997,12 @@
       container.innerHTML = '';
       list.forEach(function(fp) {
         var row = document.createElement('div');
-        row.className = 'flex items-center justify-between bg-slate-50 border border-slate-200/70 rounded-xl px-3 py-2 text-xs';
+        row.className = 'flex items-center justify-between bg-slate-50 border border-slate-200/70 rounded-xl px-2.5 py-1.5 text-xs';
         row.innerHTML =
-          '<div class="min-w-0 pr-2">' +
-            '<div class="font-bold text-slate-800 truncate">你關注過：' + fp.title + '</div>' +
-            '<div class="text-[11px] text-slate-500">最抵 <b class="text-emerald-700">' + fp.bestStore + ' $' + fp.bestPrice.toFixed(1) + '</b> (避開 ' + fp.highStore + ' $' + fp.highPrice.toFixed(1) + ')</div>' +
-          '</div>' +
-          '<span class="bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-[11px] px-2 py-0.5 rounded-md whitespace-nowrap shrink-0">慳 $' + fp.saveAmount.toFixed(1) + '</span>';
+          '<span class="font-bold text-slate-800 truncate pr-2">' + fp.title + '</span>' +
+          '<span class="text-emerald-700 font-extrabold whitespace-nowrap shrink-0">最平 ' + fp.bestStore + ' $' + fp.bestPrice.toFixed(1) + '</span>';
         container.appendChild(row);
       });
-    }
-
-    // ============================================================================
-    // DYNAMIC UI RENDERING (Zero Hardcoded Places in HTML Skeleton)
-    // ============================================================================
-    function renderNavigationBars() {
-      // 1. Zone Bar
-      var zBar = document.getElementById('zone-bar');
-      if (zBar) {
-        zBar.innerHTML = '';
-        ZONES_TABLE.forEach(function(z) {
-          var active = z.id === currentZone;
-          var btn = document.createElement('button');
-          btn.onclick = function() { selectZone(z.id); };
-          btn.className = active
-            ? 'px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white whitespace-nowrap transition shadow-xs'
-            : 'px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200/70 whitespace-nowrap transition';
-          btn.textContent = z.label;
-          zBar.appendChild(btn);
-        });
-      }
-
-      // 2. Category Bar
-      var cBar = document.getElementById('category-bar');
-      if (cBar) {
-        cBar.innerHTML = '';
-        var selectedCount = PRODUCTS_DATASET.filter(function(p) { return basketState[p.id]; }).length;
-        CATEGORIES_TABLE.forEach(function(c) {
-          var active = c.id === currentCategory;
-          var btn = document.createElement('button');
-          btn.onclick = function() { selectCategory(c.id); };
-          btn.className = active
-            ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-600 text-white whitespace-nowrap transition'
-            : 'px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 whitespace-nowrap transition';
-          var labelText = c.label;
-          if (c.id === 'BASKET' && selectedCount > 0) {
-            labelText = '已選 (' + selectedCount + ')';
-          }
-          btn.textContent = labelText;
-          cBar.appendChild(btn);
-        });
-      }
-
-      // 3. Quick Store Chips in Report Modal
-      var chipsContainer = document.getElementById('quick-store-chips');
-      if (chipsContainer) {
-        chipsContainer.innerHTML = '';
-        STORES_TABLE.slice(0, 6).forEach(function(st) {
-          var chip = document.createElement('button');
-          chip.onclick = function() { setQuickReportStore(st.location + ' ' + st.brand); };
-          chip.className = 'px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs text-slate-700 font-medium text-left truncate transition';
-          chip.textContent = st.location + '・' + st.brand;
-          chipsContainer.appendChild(chip);
-        });
-      }
-    }
-
-    function renderRoutePresets() {
-      var container = document.getElementById('route-presets-container');
-      if (!container) return;
-      container.innerHTML = '';
-      ROUTE_PRESETS.forEach(function(rt) {
-        var totalSpend = 0;
-        var totalSave = 0;
-        var totalWeight = 0;
-        rt.productIds.forEach(function(pid) {
-          var p = PRODUCTS_DATASET.find(function(x) { return x.id === pid; });
-          if (p) {
-            var best = getBestQuote(p, 'ALL');
-            totalSpend += best.bundleTotal;
-            totalSave += getProductBundleSavings(p);
-            totalWeight += p.unitWeightKg;
-          }
-        });
-
-        var btn = document.createElement('button');
-        btn.onclick = function() { applyRoutePreset(rt.id); };
-        btn.className = 'bg-slate-50 hover:bg-slate-100/90 active:scale-[0.99] border border-slate-200/90 rounded-xl p-3 text-left transition flex flex-col justify-between';
-        btn.innerHTML =
-          '<div>' +
-            '<div class="flex items-center justify-between gap-1">' +
-              '<span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-1.5 py-0.5 rounded whitespace-nowrap">' + rt.badge + '</span>' +
-              '<span class="text-[11px] font-bold text-emerald-700 font-mono whitespace-nowrap">慳 $' + totalSave.toFixed(1) + '</span>' +
-            '</div>' +
-            '<div class="text-xs font-bold text-slate-900 mt-1.5 leading-snug">' + rt.title + '</div>' +
-            '<div class="text-[11px] text-slate-500 mt-0.5 leading-snug">' + rt.subtitle + '</div>' +
-          '</div>' +
-          '<div class="mt-2.5 pt-2 border-t border-slate-200/70 flex items-baseline justify-between">' +
-            '<span class="text-sm font-extrabold text-slate-900 font-mono">$' + totalSpend.toFixed(1) + '</span>' +
-            '<span class="text-[10px] text-slate-500 font-mono whitespace-nowrap">負重 ' + totalWeight.toFixed(1) + 'kg</span>' +
-          '</div>';
-        container.appendChild(btn);
-      });
-    }
-
-    function selectZone(zoneId) {
-      currentZone = zoneId;
-      renderNavigationBars();
-      renderCards();
-    }
-
-    function selectCategory(catId) {
-      currentCategory = catId;
-      renderNavigationBars();
-      renderCards();
-    }
-
-    function cycleSortMode() {
-      var modes = ['SAVINGS', 'WEIGHT', 'UNIT_COST'];
-      var labels = {
-        'SAVINGS': '按實慳額',
-        'WEIGHT': '輕巧優先',
-        'UNIT_COST': '單位成本'
-      };
-      var nextIdx = (modes.indexOf(sortMode) + 1) % modes.length;
-      sortMode = modes[nextIdx];
-      var lbl = document.getElementById('sort-label');
-      if (lbl) lbl.textContent = labels[sortMode];
-      renderCards();
-      showToast('已切換排序：' + labels[sortMode]);
-    }
-
-    function applyRoutePreset(routeId) {
-      var rt = ROUTE_PRESETS.find(function(x) { return x.id === routeId; });
-      if (!rt) return;
-      PRODUCTS_DATASET.forEach(function(p) { basketState[p.id] = false; });
-      rt.productIds.forEach(function(pid) {
-        basketState[pid] = true;
-        recordUserFootprint(pid);
-      });
-      updateBasketSummary();
-      renderNavigationBars();
-      renderCards();
-      showToast('已載入動線組合：' + rt.title);
-    }
-
-    function toggleBasketItem(productId) {
-      basketState[productId] = !basketState[productId];
-      if (basketState[productId]) {
-        recordUserFootprint(productId);
-      }
-      updateBasketSummary();
-      renderNavigationBars();
-      renderCards();
     }
 
     function verifyStock(productId) {
@@ -732,213 +1013,35 @@
         votedState[productId] = true;
         recordUserFootprint(productId);
         renderCards();
-        showToast('已記錄現場核驗，並加入你的個人關注足跡');
+        showToast('👍 多謝報準！已更新核實人數');
       } else {
-        showToast('你今日已核驗過此項情報');
+        showToast('你今日已確認過呢項價錢');
       }
-    }
-
-    function updateBasketSummary() {
-      var totalSpend = 0;
-      var totalSave = 0;
-      var totalWeight = 0;
-      var count = 0;
-
-      PRODUCTS_DATASET.forEach(function(p) {
-        if (basketState[p.id]) {
-          var best = getBestQuote(p, 'ALL');
-          totalSpend += best.bundleTotal;
-          totalSave += getProductBundleSavings(p);
-          totalWeight += p.unitWeightKg;
-          count += 1;
-        }
-      });
-
-      document.getElementById('disp-total-spend').textContent = '$' + totalSpend.toFixed(1);
-      document.getElementById('disp-total-save').textContent = '比均價慳 $' + totalSave.toFixed(1);
-      document.getElementById('disp-total-weight').textContent = totalWeight.toFixed(1) + ' kg';
-      document.getElementById('disp-selected-count').textContent = String(count);
-
-      var loadTag = document.getElementById('ergonomic-load-tag');
-      var warnBar = document.getElementById('weight-warning-bar');
-      if (loadTag) {
-        if (totalWeight === 0) {
-          loadTag.textContent = '空手輕便';
-          loadTag.className = 'text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-medium';
-        } else if (totalWeight < 3.0) {
-          loadTag.textContent = '單手輕鬆';
-          loadTag.className = 'text-[10px] bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded font-semibold';
-        } else if (totalWeight < 5.0) {
-          loadTag.textContent = '建議雙手分擔';
-          loadTag.className = 'text-[10px] bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded font-semibold';
-        } else {
-          loadTag.textContent = '重物宜就近/推車';
-          loadTag.className = 'text-[10px] bg-rose-50 text-rose-700 px-1.5 py-0.5 rounded font-bold';
-        }
-      }
-      if (warnBar) {
-        if (totalWeight >= 5.0) {
-          warnBar.classList.remove('hidden');
-        } else {
-          warnBar.classList.add('hidden');
-        }
-      }
-    }
-
-    function renderCards() {
-      var container = document.getElementById('cards-container');
-      if (!container) return;
-      container.innerHTML = '';
-
-      var filtered = PRODUCTS_DATASET.filter(function(p) {
-        if (currentCategory === 'BASKET' && !basketState[p.id]) return false;
-        if (currentCategory !== 'ALL' && currentCategory !== 'BASKET' && p.category !== currentCategory) return false;
-        if (currentZone !== 'ALL') {
-          var bestInAll = getBestQuote(p, 'ALL');
-          if (bestInAll.zone !== currentZone) return false;
-        }
-        return true;
-      });
-
-      filtered.sort(function(a, b) {
-        if (sortMode === 'SAVINGS') {
-          return getProductBundleSavings(b) - getProductBundleSavings(a);
-        } else if (sortMode === 'WEIGHT') {
-          return a.unitWeightKg - b.unitWeightKg;
-        } else {
-          return a.normCostPer100 - b.normCostPer100;
-        }
-      });
-
-      if (filtered.length === 0) {
-        var empty = document.createElement('div');
-        empty.className = 'bg-white border border-slate-200 rounded-2xl p-8 text-center space-y-1.5';
-        empty.innerHTML =
-          '<div class="text-sm font-bold text-slate-700">此分類暫無已選項目</div>' +
-          '<div class="text-xs text-slate-500">可點選上方「人體動線最優組合」或切換至「全部」瀏覽</div>';
-        container.appendChild(empty);
-        return;
-      }
-
-      filtered.forEach(function(p) {
-        var best = getBestQuote(p, 'ALL');
-        var high = getHighestQuote(p);
-        var bundleSave = getProductBundleSavings(p);
-        var savePct = Math.round(((p.marketNormUnit - best.unitPrice) / p.marketNormUnit) * 100);
-        var inBasket = basketState[p.id];
-
-        // Build Trolley.co.uk style side-by-side Store Comparison Strip
-        var quotesHtml = p.quotes.map(function(q) {
-          var pillCls = q.isBest
-            ? 'bg-emerald-50/90 border-emerald-300 text-slate-900'
-            : (q.isHighAnchor ? 'bg-slate-50 border-slate-200 text-slate-400' : 'bg-slate-50 border-slate-200/80 text-slate-700');
-          var priceCls = q.isBest
-            ? 'text-sm font-extrabold text-emerald-700 font-mono'
-            : (q.isHighAnchor ? 'text-xs font-semibold text-slate-400 line-through font-mono' : 'text-xs font-bold text-slate-800 font-mono');
-          var badgeHtml = q.isBest
-            ? '<span class="text-[10px] font-bold text-emerald-700 bg-emerald-100/80 px-1.5 py-0.2 rounded">最抵</span>'
-            : (q.isHighAnchor ? '<span class="text-[10px] font-medium text-rose-600 bg-rose-50 px-1.5 py-0.2 rounded">偏高</span>' : '');
-
-          return '<div class="border rounded-xl p-2 flex flex-col justify-between ' + pillCls + '">' +
-            '<div class="flex items-center justify-between gap-1">' +
-              '<span class="text-[11px] font-bold truncate">' + q.storeLabel + '</span>' +
-              badgeHtml +
-            '</div>' +
-            '<div class="mt-1 flex items-baseline justify-between gap-1">' +
-              '<span class="' + priceCls + '">$' + q.unitPrice.toFixed(1) + '</span>' +
-              '<span class="text-[10px] text-slate-400 truncate">' + q.note + '</span>' +
-            '</div>' +
-          '</div>';
-        }).join('');
-
-        var btnCls = inBasket
-          ? 'bg-slate-900 text-white border-slate-900'
-          : 'bg-white text-slate-800 border-slate-300 hover:bg-slate-50';
-        var btnText = inBasket ? '✓ 已加入清單' : '＋ 加入採購清單';
-
-        var card = document.createElement('article');
-        card.className = 'bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs space-y-3 transition';
-        card.innerHTML =
-          '<!-- Top Header: Brand, Title & Lowest Price Callout -->' +
-          '<div class="flex items-start justify-between gap-3">' +
-            '<div class="min-w-0">' +
-              '<div class="flex items-center gap-1.5 flex-wrap">' +
-                '<span class="text-[11px] font-bold text-slate-500">' + p.brandName + '</span>' +
-                '<span class="text-slate-300">·</span>' +
-                '<span class="text-[11px] text-slate-500">' + p.spec + '</span>' +
-                '<span class="text-slate-300">·</span>' +
-                '<span class="text-[11px] text-slate-400 font-mono">$' + p.normCostPer100.toFixed(2) + '/' + p.normUnitName + '</span>' +
-              '</div>' +
-              '<h3 class="text-base font-extrabold text-slate-900 mt-0.5 leading-snug">' + p.title + '</h3>' +
-              '<div class="flex items-center gap-1.5 mt-1 flex-wrap">' +
-                '<span class="text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-medium">' + p.ergonomicTag + '</span>' +
-              '</div>' +
-            '</div>' +
-            '<div class="text-right shrink-0">' +
-              '<div class="text-[10px] font-semibold text-slate-400 whitespace-nowrap">全區最低單價</div>' +
-              '<div class="text-xl font-black text-emerald-700 font-mono leading-tight">$' + best.unitPrice.toFixed(1) + '</div>' +
-              (savePct > 0
-                ? '<span class="inline-block text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 px-1.5 py-0.2 rounded mt-0.5 whitespace-nowrap">比均價平 ' + savePct + '% (慳$' + bundleSave.toFixed(1) + ')</span>'
-                : '<span class="inline-block text-[10px] text-slate-400 mt-0.5">常態基準價</span>') +
-            '</div>' +
-          '</div>' +
-
-          '<!-- Trolley.co.uk Style Side-by-Side Store Price Strip -->' +
-          '<div class="grid grid-cols-3 gap-1.5 pt-1">' +
-            quotesHtml +
-          '</div>' +
-
-          '<!-- Concise Behavioral Economics & Trap Insight -->' +
-          '<div class="bg-slate-50/90 border border-slate-200/60 rounded-xl px-3 py-2 text-xs text-slate-600 leading-relaxed">' +
-            p.pricingInsight +
-          '</div>' +
-
-          '<!-- Bottom Action Bar -->' +
-          '<div class="pt-1 flex items-center gap-2">' +
-            '<button onclick="toggleBasketItem(\'' + p.id + '\')" class="touch-target flex-1 py-2 px-3 rounded-xl border text-xs font-bold whitespace-nowrap transition ' + btnCls + '">' + btnText + '</button>' +
-            '<button onclick="verifyStock(\'' + p.id + '\')" class="touch-target py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200/80 text-xs font-semibold text-slate-700 whitespace-nowrap shrink-0 transition">實價核驗 (' + p.verifiedCount + ')</button>' +
-            '<button onclick="shareSingleProduct(\'' + p.id + '\')" class="touch-target py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200/80 text-xs font-semibold text-slate-700 whitespace-nowrap shrink-0 transition">分享</button>' +
-          '</div>';
-
-        container.appendChild(card);
-      });
     }
 
     // ============================================================================
-    // SHARE & EXPORT FUNCTIONS
+    // SHARE & EXPORT
     // ============================================================================
     function getShareUrlLine() {
       var loc = window.location && window.location.href ? window.location.href : '';
       if (loc.indexOf('github.io') !== -1) {
-        return '\n即時格價與動線中樞：' + loc;
+        return '\n沙田街坊格價手冊：' + loc;
       }
-      return '\n即時格價與動線中樞：https://hokwanwai.github.io/002-app/';
+      return '\n沙田街坊格價手冊：https://hokwanwai.github.io/002-app/';
     }
 
     function shareSingleProduct(productId) {
       var p = PRODUCTS_DATASET.find(function(x) { return x.id === productId; });
       if (!p) return;
       recordUserFootprint(productId);
-      var best = getBestQuote(p, 'ALL');
+      var best = getOverallBestQuote(p);
       var quoteLines = p.quotes.map(function(q) {
         return '・' + q.storeLabel + '：$' + q.unitPrice.toFixed(1) + ' (' + q.note + ')';
       }).join('\n');
-      var text = '【002 跨店實價對比】' + p.brandName + ' ' + p.title + ' (' + p.spec + ')\n' +
-        '最抵門市：' + best.storeLabel + ' $' + best.unitPrice.toFixed(1) + ' (一組慳 $' + getProductBundleSavings(p).toFixed(1) + ')\n' +
+      var text = '【沙田街坊格價】' + p.icon + ' ' + p.brandName + ' ' + p.title + '\n' +
+        '✅ 最抵買：' + best.storeLabel + ' $' + best.unitPrice.toFixed(1) + '\n' +
         quoteLines + '\n' +
-        '動線建議：' + p.ergonomicTag +
-        getShareUrlLine();
-      triggerShareOrCopy(text);
-    }
-
-    function shareSummaryReport() {
-      var lines = PRODUCTS_DATASET.slice(0, 5).map(function(p, idx) {
-        var best = getBestQuote(p, 'ALL');
-        var high = getHighestQuote(p);
-        return (idx + 1) + '. ' + p.brandName + p.title + '：最抵 ' + best.storeLabel + ' $' + best.unitPrice.toFixed(1) + ' (對比 ' + high.storeLabel + ' $' + high.unitPrice.toFixed(1) + ')';
-      }).join('\n');
-      var text = '【002 沙田四邨跨店實價摘要 (水泉澳/沙角/乙明/博康)】\n' +
-        lines +
+        '💡 貼士：' + p.shopperTip +
         getShareUrlLine();
       triggerShareOrCopy(text);
     }
@@ -946,18 +1049,18 @@
     function shareBasketBragCard() {
       var selected = PRODUCTS_DATASET.filter(function(p) { return basketState[p.id]; });
       if (selected.length === 0) {
-        shareSummaryReport();
+        showToast('請先喺貨品卡撳「＋ 加入今日採購清單」');
         return;
       }
       var spend = document.getElementById('disp-total-spend').textContent;
       var save = document.getElementById('disp-total-save').textContent;
       var weight = document.getElementById('disp-total-weight').textContent;
       var lines = selected.map(function(p, i) {
-        var best = getBestQuote(p, 'ALL');
-        return (i + 1) + '. ' + p.brandName + p.title + '：' + best.storeLabel + ' $' + best.bundleTotal.toFixed(1) + '/' + p.bundleQty + p.bundleUnit + ' (' + p.unitWeightKg.toFixed(1) + 'kg)';
+        var active = getActiveQuoteForView(p);
+        return (i + 1) + '. ' + p.icon + ' ' + p.brandName + p.title + '：' + active.storeLabel + ' $' + active.bundleTotal.toFixed(1) + '/' + p.bundleQty + p.bundleUnit;
       }).join('\n');
-      var text = '【002 採購清單與動線規劃】\n' +
-        '已選 ' + selected.length + ' 項｜總實付 ' + spend + '（' + save + '｜總重 ' + weight + '）：\n' +
+      var text = '【今日買餸格價清單】\n' +
+        '共 ' + selected.length + ' 樣｜總計 ' + spend + '（' + save + '｜重 ' + weight + '）：\n' +
         lines +
         getShareUrlLine();
       triggerShareOrCopy(text);
@@ -973,7 +1076,7 @@
         ta.select();
         document.execCommand('copy');
         document.body.removeChild(ta);
-        showToast('已複製清單文字，可直接貼上至 WhatsApp');
+        showToast('📋 已複製清單文字，可直接貼上至 WhatsApp');
       } catch (e) {
         showToast('已備妥分享文字');
       }
@@ -981,12 +1084,12 @@
 
     function triggerShareOrCopy(text) {
       if (navigator && navigator.share) {
-        navigator.share({ title: '002 智能格價清單', text: text }).catch(function() {
+        navigator.share({ title: '沙田街坊格價清單', text: text }).catch(function() {
           fallbackCopyText(text);
         });
       } else if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(text).then(function() {
-          showToast('已複製清單文字，可直接貼上至 WhatsApp');
+          showToast('📋 已複製清單文字，可直接貼上至 WhatsApp');
         }).catch(function() {
           fallbackCopyText(text);
         });
@@ -996,15 +1099,14 @@
     }
 
     // ============================================================================
-    // FIELD REPORTING & CLOUD BACKEND MODAL HANDLERS
+    // SUPABASE LIVE CLOUD FEED & FIELD REPORTING
     // ============================================================================
     function openReportModal() {
-      var firstStore = STORES_TABLE[0];
       var stInput = document.getElementById('report-store-input');
-      if (stInput && !stInput.value && firstStore) {
-        stInput.value = firstStore.location + ' ' + firstStore.brand;
+      if (stInput && !stInput.value) {
+        stInput.value = '水泉澳 惠康';
       }
-      renderStagingPreview();
+      fetchCloudStagingQueue();
       document.getElementById('report-modal').classList.remove('hidden');
     }
 
@@ -1019,95 +1121,84 @@
     function startVoiceRecognition() {
       var SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRec) {
-        showToast('此瀏覽器建議使用鍵盤內建語音咪輸入');
+        showToast('建議直接按手機鍵盤右下角「咪高峰」語音輸入');
         return;
       }
       var rec = new SpeechRec();
       rec.lang = 'zh-HK';
       rec.interimResults = false;
       var btn = document.getElementById('voice-record-btn');
-      btn.textContent = '正在聆聽廣東話... 請講出門市與貨價';
+      btn.textContent = '🎙️ 正在聆聽廣東話... 請講出商舖與貨價';
       rec.onresult = function(event) {
         var transcript = event.results[0][0].transcript;
         document.getElementById('report-text-input').value = transcript;
         btn.textContent = '✓ 已識別語音，請確認送出';
       };
       rec.onerror = function() {
-        btn.textContent = '按此重新開始廣東話語音輸入';
+        btn.textContent = '🎙️ 按此重新開始廣東話語音輸入';
       };
       rec.start();
     }
 
     function fetchCloudStagingQueue() {
       var box = document.getElementById('staging-log-preview');
+      var feedSec = document.getElementById('cloud-feed-section');
+      var feedList = document.getElementById('cloud-feed-list');
       var sbUrl = safeGetStorage('002_supabase_url', 'https://wyzwxvmsxsefzhrgvwiy.supabase.co').trim();
       var sbKey = safeGetStorage('002_supabase_key', 'sb_publishable_grfQfwKNjUPqPFKFkuJ2qw_XXCsAew2').trim();
       if (!sbUrl || !sbKey) return;
+
       var reqHeaders = { 'apikey': sbKey };
       if (sbKey.indexOf('eyJ') === 0) {
         reqHeaders['Authorization'] = 'Bearer ' + sbKey;
       }
-      fetch(sbUrl.replace(/\/$/, '') + '/rest/v1/staging_queue?select=staging_id,store_name,report_text,created_at&order=staging_id.desc&limit=5', {
+
+      fetch(sbUrl.replace(/\/$/, '') + '/rest/v1/staging_queue?select=staging_id,store_name,report_text,created_at&order=staging_id.desc&limit=8', {
         method: 'GET',
         headers: reqHeaders
       }).then(function(res) {
         if (!res.ok) return null;
         return res.json();
       }).then(function(rows) {
-        if (!rows || !Array.isArray(rows) || !box) return;
+        if (!rows || !Array.isArray(rows)) return;
         var badge = document.getElementById('db-mode-badge');
         if (badge) {
-          badge.textContent = 'Supabase 已連通 (' + rows.length + '筆)';
-          badge.className = 'bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-1.5 py-0.5 rounded whitespace-nowrap shrink-0';
+          badge.textContent = '🟢 雲端實時 (' + rows.length + '筆)';
         }
-        if (rows.length > 0) {
+        // 1. Render on Main Screen Live Feed Strip!
+        if (feedSec && feedList && rows.length > 0) {
+          feedSec.classList.remove('hidden');
+          feedList.innerHTML = rows.map(function(r) {
+            return '<div class="bg-emerald-50/70 border border-emerald-200/90 rounded-xl px-2.5 py-1.5 shrink-0 max-w-[230px]">' +
+              '<div class="text-[10px] font-bold text-emerald-800 truncate">📍 ' + r.store_name + '</div>' +
+              '<div class="text-xs font-extrabold text-slate-900 truncate mt-0.5">' + r.report_text + '</div>' +
+            '</div>';
+          }).join('');
+        }
+        // 2. Render inside Report Modal
+        if (box && rows.length > 0) {
           box.classList.remove('hidden');
-          box.innerHTML = '<div class="font-bold text-emerald-700 mb-1">✓ 雲端 staging_queue 實時回讀 (' + rows.length + ' 筆)：</div>' +
-            rows.map(function(r) {
-              return '<div>· #' + r.staging_id + ' [' + r.store_name + '] ' + r.report_text + '</div>';
+          box.innerHTML = '<div class="font-bold text-emerald-800 mb-1">✓ 雲端最新報價紀錄 (' + rows.length + ' 筆)：</div>' +
+            rows.slice(0, 4).map(function(r) {
+              return '<div>· #' + r.staging_id + ' [' + r.store_name + '] <b>' + r.report_text + '</b></div>';
             }).join('');
         }
       }).catch(function() {});
-    }
-
-    function renderStagingPreview() {
-      var box = document.getElementById('staging-log-preview');
-      if (!box) return;
-      fetchCloudStagingQueue();
-      var raw = safeGetStorage('002_staging_queue_v3', '[]');
-      var list = [];
-      try { list = JSON.parse(raw); } catch (e) { list = []; }
-      if (list.length === 0) {
-        box.classList.add('hidden');
-        return;
-      }
-      box.classList.remove('hidden');
-      box.innerHTML = '<div class="font-bold text-slate-700 mb-1">本機/雲端待審隊列最新記錄 (' + list.length + ' 筆)：</div>' +
-        list.slice(0, 3).map(function(item) {
-          return '<div>· [' + item.store + '] ' + item.rawText + '</div>';
-        }).join('');
     }
 
     function submitFieldReport() {
       var store = document.getElementById('report-store-input').value.trim();
       var text = document.getElementById('report-text-input').value.trim();
       if (!text) {
-        showToast('請輸入或語音講出商品與實價');
+        showToast('請輸入或用語音講出貨品同價錢');
         return;
       }
-      var raw = safeGetStorage('002_staging_queue_v3', '[]');
-      var queue = [];
-      try { queue = JSON.parse(raw); } catch (e) { queue = []; }
       var payload = {
         store_name: store || '未指定門市',
         report_text: text,
-        created_at: new Date().toISOString(),
         is_verified: false
       };
-      queue.unshift({ store: payload.store_name, rawText: payload.report_text, time: payload.created_at });
-      safeSetStorage('002_staging_queue_v3', JSON.stringify(queue));
 
-      // Official Supabase 2026 API spec: send sb_publishable_ on `apikey` header ONLY (never on Authorization: Bearer)
       var sbUrl = safeGetStorage('002_supabase_url', 'https://wyzwxvmsxsefzhrgvwiy.supabase.co').trim();
       var sbKey = safeGetStorage('002_supabase_key', 'sb_publishable_grfQfwKNjUPqPFKFkuJ2qw_XXCsAew2').trim();
       if (sbUrl && sbKey) {
@@ -1122,24 +1213,18 @@
         fetch(sbUrl.replace(/\/$/, '') + '/rest/v1/staging_queue', {
           method: 'POST',
           headers: reqHeaders,
-          body: JSON.stringify({
-            store_name: payload.store_name,
-            report_text: payload.report_text,
-            is_verified: false
-          })
+          body: JSON.stringify(payload)
         }).then(function(res) {
           if (!res.ok) {
             return res.text().then(function(errTxt) {
               throw new Error('HTTP ' + res.status + ': ' + errTxt);
             });
           }
-          showToast('✓ 成功寫入 Supabase 雲端 staging_queue 表！');
+          showToast('🎉 報價成功！已即時顯示喺主頁頂部！');
           fetchCloudStagingQueue();
         }).catch(function(err) {
           showToast('雲端寫入失敗 (' + (err && err.message ? err.message.slice(0, 38) : '請檢查網絡') + ')');
         });
-      } else {
-        showToast('✓ 已存入本機待審隊列');
       }
 
       document.getElementById('report-text-input').value = '';
@@ -1166,43 +1251,14 @@
       safeSetStorage('002_supabase_url', sbUrl);
       safeSetStorage('002_supabase_key', sbKey);
 
-      var badge = document.getElementById('db-mode-badge');
-      if (sbUrl && sbKey) {
-        if (badge) {
-          badge.textContent = 'Supabase 雲端庫';
-          badge.className = 'bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-1.5 py-0.5 rounded whitespace-nowrap shrink-0';
-        }
-        closeBackendModal();
-        showToast('✓ 已連通 Supabase 雲端數據庫');
-      } else if (csvUrl) {
-        fetch(csvUrl)
-          .then(function(res) { return res.text(); })
-          .then(function(csvText) {
-            var rows = csvText.split(/\r?\n/).filter(function(r) { return r.trim().length > 0; });
-            if (badge) {
-              badge.textContent = 'Sheet 已同步 (' + Math.max(0, rows.length - 1) + ')';
-              badge.className = 'bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-1.5 py-0.5 rounded whitespace-nowrap shrink-0';
-            }
-            closeBackendModal();
-            showToast('✓ 已連通 Google Sheet 數據包');
-          })
-          .catch(function() {
-            closeBackendModal();
-            showToast('✓ 已儲存數據源設定');
-          });
-      } else {
-        if (badge) {
-          badge.textContent = '沙盒數據 #1';
-          badge.className = 'bg-slate-100 text-slate-600 text-[10px] font-semibold px-1.5 py-0.5 rounded whitespace-nowrap shrink-0';
-        }
-        closeBackendModal();
-        showToast('使用預設沙盒測試數據包 #1');
-      }
+      closeBackendModal();
+      fetchCloudStagingQueue();
+      showToast('✓ 已儲存雲端設定並重新同步');
     }
 
     window.onload = function() {
       renderNavigationBars();
-      renderRoutePresets();
+      updateShopperModeBanner();
       renderFootprints();
       renderCards();
       updateBasketSummary();
