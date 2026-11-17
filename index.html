@@ -57,9 +57,6 @@
 
         <div class="flex items-center gap-1.5 flex-1 max-w-[180px]">
           <input type="search" id="search-input" oninput="onSearchInput(this.value)" placeholder="搜尋熱浪、可樂、米..." class="w-full bg-slate-100 focus:bg-white border border-transparent focus:border-slate-300 rounded-xl px-2.5 py-1.5 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none transition">
-          <button onclick="openBackendModal()" title="資料庫設定" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200/80 text-slate-600 flex items-center justify-center text-xs shrink-0 transition">
-            ⚙️
-          </button>
         </div>
       </div>
 
@@ -90,7 +87,7 @@
       </div>
     </section>
 
-    <!-- Real Cloud Community Feed (從 Supabase 讀取阿偉與街坊嘅現場報料) -->
+    <!-- Real Cloud Community Feed (從 Supabase 讀取街坊現場報價) -->
     <section id="cloud-feed-section" class="px-3.5 mt-2 hidden">
       <div class="bg-white border border-slate-200/90 rounded-2xl p-2.5 shadow-2xs space-y-1">
         <div class="flex items-center justify-between gap-2">
@@ -632,19 +629,33 @@
         if (!rows || !Array.isArray(rows)) return;
         if (feedSec && feedList && rows.length > 0) {
           feedSec.classList.remove('hidden');
-          feedList.innerHTML = rows.map(function(r) {
-            return '<div class="bg-emerald-50 border border-emerald-200 rounded-xl px-2 py-1 shrink-0 text-xs">' +
-              '<div class="text-[10px] text-emerald-800 font-bold">' + r.store_name + '</div>' +
-              '<div class="font-extrabold text-slate-900">' + r.report_text + '</div>' +
-            '</div>';
-          }).join('');
+          feedList.innerHTML = '';
+          rows.forEach(function(r) {
+            var card = document.createElement('div');
+            card.className = 'bg-emerald-50 border border-emerald-200 rounded-xl px-2 py-1 shrink-0 text-xs';
+            var storeEl = document.createElement('div');
+            storeEl.className = 'text-[10px] text-emerald-800 font-bold';
+            storeEl.textContent = r.store_name || '';
+            var textEl = document.createElement('div');
+            textEl.className = 'font-extrabold text-slate-900';
+            textEl.textContent = r.report_text || '';
+            card.appendChild(storeEl);
+            card.appendChild(textEl);
+            feedList.appendChild(card);
+          });
         }
         if (box && rows.length > 0) {
           box.classList.remove('hidden');
-          box.innerHTML = '<div class="font-bold text-emerald-800 mb-1">雲端已記錄：</div>' +
-            rows.slice(0, 3).map(function(r) {
-              return '<div>· ' + r.store_name + ': ' + r.report_text + '</div>';
-            }).join('');
+          box.innerHTML = '';
+          var titleEl = document.createElement('div');
+          titleEl.className = 'font-bold text-emerald-800 mb-1';
+          titleEl.textContent = '雲端已記錄：';
+          box.appendChild(titleEl);
+          rows.slice(0, 3).forEach(function(r) {
+            var rowEl = document.createElement('div');
+            rowEl.textContent = '· ' + (r.store_name || '') + ': ' + (r.report_text || '');
+            box.appendChild(rowEl);
+          });
         }
       }).catch(function() {});
     }
